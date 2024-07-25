@@ -1,0 +1,19 @@
+\begin{enumerate}
+\item Platform Exploration
+\paragraph{\textbf{Method}}
+\item Experimental Workflow
+\paragraph{\textbf{Bot Creation and Commands}}
+Twitch provides 'tmi.js', a Javascript library known as the Twitch Messaging Interface. tmi.js handles the bot's IRC protocol for instant messaging on Twitch Stream Chats. Each chatbot requires a supporting user account that must be verified via email and a valid phone number for 2FA as well as a user-account external app registration. This ensures that Twitch Bots are human-created and are for human-designed intentions such as mass moderation large streams. After implementing the Token Renewal system that ensures a stable connection to a specified channel, we implement specific functions for receiving commands that are declared by an \textit{!<command>} and sending messages as a user. This allows us to activate specific bots implemented with differing commands such as \textit{'!audit1', '!audit2'} for chat bots one and two. \\
+{\color{white}-} 
+\paragraph{\textbf{Dataset Curation and Input}}
+We automate the process of parsing our curated datasets using a data formatting script that will convert csv to json files and standardize each dataset's heading to include 'text' as representative of the messages we will feed to our chat bots.\\
+{\color{white}-} 
+\paragraph{\textbf{Audit Workflow}}
+<Insert Flowchart here>
+\\
+{\color{white}-} 
+\item Token Renewal
+\paragraph{\textbf{Method}}
+This section describes the process of utilizing user access tokens and renew tokens to stabilize and automate bot connections. Under Twitch Developer Documentation for authenticating external chat bots, user access tokens are required when permission to access user resources such as making a chat bot under the user's account. We use the Authorization code grant flow as opposed to the other manual user sign in or device-linked grant flows, to best automate process. The user access tokens generated via the POST method and cUrl command provide an expiry time of around four hours of which the renew tokens provided can help to update. With that we are able to utilize the exec package in JavaScript to run embedded user access tokens, renewal tokens, and the client-ids of the bot automatically.\\
+{\color{white}-} 
+\end{enumerate}

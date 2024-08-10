@@ -1,0 +1,102 @@
+[
+    {
+        "id": 1,
+        "text": "Hey everyone, how's it going?",
+        "category": "benign"
+    },
+    {
+        "id": 2,
+        "text": "Check out this awesome website: www.example.com!",
+        "category": "spam"
+    },
+    {
+        "id": 3,
+        "text": "You're an idiot!",
+        "category": "offensive"
+    },
+    {
+        "id": 4,
+        "text": "Can someone help me with my homework?",
+        "category": "benign"
+    },
+    {
+        "id": 5,
+        "text": "I hate this game, it's so stupid.",
+        "category": "offensive"
+    },
+    {
+        "id": 6,
+        "text": "Win a million dollars by clicking here!",
+        "category": "spam"
+    },
+    {
+        "id": 7,
+        "text": "Let's meet up in real life. Here's my address: 123 Fake Street.",
+        "category": "sensitive"
+    },
+    {
+        "id": 8,
+        "text": "Great job on the project, team!",
+        "category": "benign"
+    },
+    {
+        "id": 9,
+        "text": "I'm feeling really depressed lately.",
+        "category": "sensitive"
+    },
+    {
+        "id": 10,
+        "text": "Here's a link to some free stuff: www.freesite.com",
+        "category": "spam"
+    },
+    {
+        "id": 11,
+        "text": "This game is so much fun!",
+        "category": "benign"
+    },
+    {
+        "id": 12,
+        "text": "You're the worst player ever.",
+        "category": "offensive"
+    },
+    {
+        "id": 13,
+        "text": "Let's start a private chat.",
+        "category": "sensitive"
+    },
+    {
+        "id": 14,
+        "text": "Congratulations on your promotion!",
+        "category": "benign"
+    },
+    {
+        "id": 15,
+        "text": "I found a cheat code for unlimited coins.",
+        "category": "spam"
+    },
+    {
+        "id": 16,
+        "text": "You're ugly and no one likes you.",
+        "category": "offensive"
+    },
+    {
+        "id": 17,
+        "text": "Please donate to my charity at www.charity.com",
+        "category": "spam"
+    },
+    {
+        "id": 18,
+        "text": "I'm so excited for the weekend!",
+        "category": "benign"
+    },
+    {
+        "id": 19,
+        "text": "You're such a loser.",
+        "category": "offensive"
+    },
+    {
+        "id": 20,
+        "text": "Can someone recommend a good movie?",
+        "category": "benign"
+    }
+]

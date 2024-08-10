@@ -38,4 +38,4 @@
       - *todo* : need to ensure that each file's output is separated into different files and under different names. 
 
 #### What the Experiment will look like in your terminal:
-<img width="1440" alt="Screenshot 2024-08-10 at 10 13 36 AM" src="https://github.com/user-attachments/assets/ed907907-c287-4a43-8d93-0af25eaa3142">
+<img width="1440" alt="Screenshot 2024-08-10 at 10 40 13 AM" src="https://github.com/user-attachments/assets/b3130ace-7207-46b9-96a5-9939eecbee13">

@@ -37,5 +37,11 @@
       - After running once, please change the name of the result file in /results so that results are not overwritten by another run. Do this after completing one experiment. 
       - *todo* : need to ensure that each file's output is separated into different files and under different names. 
 
-#### What the Experiment will look like in your terminal:
+## 3. Running the Experiment
+1. Open up your terminal and set it up as so, following the commands to be run from the Running files section above.
 <img width="1440" alt="Screenshot 2024-08-10 at 10 40 13 AM" src="https://github.com/user-attachments/assets/b3130ace-7207-46b9-96a5-9939eecbee13">
+
+2. Open up 3 browsers where you can sign into the mollykim123, bb3e, and Littleelly000 accounts. Open up 'twitch.tv/<bb3e username>' - This is where !audit1 and !audit2 will be run respective to the accounts hence, mollykim123 will run !audit2 and Littleelly000 will run !audit1
+
+3. Ensure that your ngrok server is running and that you include the TWTICH_SIGNING_SECRET when running the listener.js
+

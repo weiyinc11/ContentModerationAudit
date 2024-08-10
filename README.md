@@ -33,6 +33,6 @@
           1. Set up Ngrok - run 'brew install ngrok' if you don't already have it installed
           2. Set up ngrok via my account - run 'ngrok config add-authtoken 2jyofp2t31yUZ368LCNVHZQBf9M_56RqVbrFxeRdLAYZWwEuT' in the same terminal
           3. Run the static url link to http://localhost:8080 by running this command 'ngrok http --domain=touching-willingly-shiner.ngrok-free.app 8080'
-      - Split the terminal from before and run 'node listener.js'
+      - Split the terminal from before and run 'TWITCH_SIGNING_SECRET=ContentMod123 node listener.js'
       - After running once, please change the name of the result file in /results so that results are not overwritten by another run. Do this after completing one experiment. 
       - *todo* : need to ensure that each file's output is separated into different files and under different names. 

@@ -22,17 +22,17 @@
 
 ## 2. Running files
 
-    * For Setting up the Bots, autorefresh functions within the bot files allow us to run **'node bot1.js'** and **'node bot2.js'** in split terminals to allow both bots to connect to the bb3e chat
-      - To run the audit / experiments where files from the /datatoSend folder are sent into the chat, move to the bb3e chat and type in **!audit1 for 'britishman420'** and **!audit2 for 'mollykim123'**
+    * For Setting up the Bots, autorefresh functions within the bot files allow us to run 'node bot1.js' and 'node bot2.js' in split terminals to allow both bots to connect to the bb3e chat
+      - To run the audit / experiments where files from the /datatoSend folder are sent into the chat, move to the bb3e chat and type in !audit1 for 'britishman420' and !audit2 for 'mollykim123'
       - *todo* : have the files that are have been run through the chat to another folder
                : need to change britishman420 to littleelly000 because I lost the login info for britishman420
 
     * Running Results Bot
       - No need for refreshing tokens
       - To start the process of grabbing messages from bb3e chat:
-          1. Set up Ngrok - run **'brew install ngrok'** if you don't already have it installed
-          2. Set up ngrok via my account - run **'ngrok config add-authtoken 2jyofp2t31yUZ368LCNVHZQBf9M_56RqVbrFxeRdLAYZWwEuT'** in the same terminal
-          3. Run the static url link to http://localhost:8080 by running this command **'ngrok http --domain=touching-willingly-shiner.ngrok-free.app 8080'**
-      - Split the terminal from before and run **'node listener.js'**
+          1. Set up Ngrok - run 'brew install ngrok' if you don't already have it installed
+          2. Set up ngrok via my account - run 'ngrok config add-authtoken 2jyofp2t31yUZ368LCNVHZQBf9M_56RqVbrFxeRdLAYZWwEuT' in the same terminal
+          3. Run the static url link to http://localhost:8080 by running this command 'ngrok http --domain=touching-willingly-shiner.ngrok-free.app 8080'
+      - Split the terminal from before and run 'node listener.js'
       - After running once, please change the name of the result file in /results so that results are not overwritten by another run. Do this after completing one experiment. 
       - *todo* : need to ensure that each file's output is separated into different files and under different names. 

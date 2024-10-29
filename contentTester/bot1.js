@@ -114,7 +114,7 @@ function rollDice () {
             const data = await fs.promises.readFile(path.join(directory, fileName), 'utf8');
             
             const json_data = JSON.parse(data);
-            const end = Math.floor(json_data.length+1);
+            const end = Math.floor(json_data.length + 1);
             const start = 0;
 
             let file_data = [];
@@ -180,13 +180,13 @@ async function processFileData(fileData, client, target, startIndex) {
                     index++;
                     count--;
                 } catch {
-                    t = 0;
+                    index++;
                 }
             } else {
                 clearInterval(intervalId);
                 resolve(index + 1);
             }
-        }, 1000);
+        }, 2000);
     });
 }
 

@@ -8,105 +8,104 @@ console.log(tokenData);
 
 // BROADCASTER / MODERATOR ROLE IN ALL SUBSCRIPTIONS
 // -----------------------------------
-// User bb3e08d1900c43886e73e600's id: 1109317124
-// User bb3e08d1900c43886e73e600's client_id: 52q9nyo1zjyi5qt2u0al093ol812dm
-// User bb3e08d1900c43886e73e600's client_secret: rhyj4a2mjri86va8731c19bxzb1s7n
-
-
-// CHATTER/USER ROLE IN ALL SUBSCRIPTIONS
-// -----------------------------------
-// User BritishMan420's id: 1108425938
+// User hughierin's id: 1135845304
+// User hughierin's client_id: 36ay5kaqu0m4s5xo3vogcp1cl1u0lv
+// User hughierin's client_secret: uzh7yd8mh5y3dggnh051w8o6t3ct0z
 
 // CHATTER/USER ROLE IN ALL SUBSCRIPTIONS
 // -----------------------------------
-// User Littleelly000's id: 1124970435
-// client_id: 6zz51egn1r2amiygntijz8w57bfc6o
-// client_secret: brmreyqr9glhjddjqvsebpmk0hmjna
+// User Homeland3r1's id: 1112905523
+// client_id: s9biimnfxwri7742sedh7f3qguivy1
+// client_secret: 7t7atort1giutcvg00u3xgm10ah1or
 
-
-// BROADCASTOR / MODERATOR ROLE IN ALL SUBSCRIPTIONS
-// -----------------------------------
-// User Mollykim123's id: 1103563061
-// User Mollykim123's client id: jx7xc70s2hqd5qwdc9q3bsoz14yq5v
-// User Mollykim123's client secret: hpn7zfnopih559o8rgjps0sm3u7nkj
-
-
+// User billybutcher708's id: 1126926753
+// client_id: u4vussk43p29rkf1unxp1bgv7629dz
+// client_secret: r2vk14oqyd23t84akmcpysnn8ma6i1
 
 // 1. Setting up the user access tokens to ensure the scope of all relevant users
 
     /* Get a url redirect to get a code for all your users */
+    // Hughie - streamer
     // https://id.twitch.tv/oauth2/authorize
     // ?response_type=code
-    // &client_id=52q9nyo1zjyi5qt2u0al093ol812dm
+    // &client_id=36ay5kaqu0m4s5xo3vogcp1cl1u0lv
     // &redirect_uri=https://localhost:3000
-    // &scope=moderator%3Amanage%3Aautomod+channel%3Abot+user%3Aread%3Achat+moderation%3Aread
+    // &scope=channel%3Abot+user%3Aread%3Achat+moderation%3Aread+moderator%3Amanage%3Aautomod
 
+    // ----------------------------------------------------------------------------------------------------
     // https://id.twitch.tv/oauth2/authorize
     // ?response_type=code
-    // &client_id=jx7xc70s2hqd5qwdc9q3bsoz14yq5v
+    // &client_id=u4vussk43p29rkf1unxp1bgv7629dz
     // &redirect_uri=https://localhost:3000
     // &scope=moderator%3Amanage%3Aautomod+user%3Aread%3Achat+user%3Abot
+    // ----------------------------------------------------------------------------------------------------
 
+    // Homelander
     // https://id.twitch.tv/oauth2/authorize
     // ?response_type=code
-    // &client_id=6zz51egn1r2amiygntijz8w57bfc6o
+    // &client_id=s9biimnfxwri7742sedh7f3qguivy1
     // &redirect_uri=https://localhost:3000
     // &scope=user%3Aread%3Achat+user%3Abot
 
     /* Result of the redirect */
-    // https://localhost:3000/?code=o4cntbjdnofi3n8f2oluwf0fc2h0fm&scope=moderator%3Amanage%3Aautomod+channel%3Abot+user%3Aread%3Achat+moderation%3Aread
+    // Hughie
+    // https://localhost:3000/?code=tfi3c7tzvlub1krucq3egiobw122q6&scope=channel%3Abot+user%3Aread%3Achat+moderation%3Aread+moderator%3Amanage%3Aautomod
 
-    // https://localhost:3000/?code=i35q0eq0f44pjdlka7d3vh30f332hx&scope=moderator%3Amanage%3Aautomod+user%3Aread%3Achat+user%3Abot
+    // Billy
+    // https://localhost:3000/?code=2j0o5roumn7rtm004bcdgif4e1kjpj&scope=moderator%3Amanage%3Aautomod+user%3Aread%3Achat+user%3Abot
 
-    // https://localhost:3000/?code=z6f1ccjrv4n4dskc9esypah4umgaol&scope=user%3Aread%3Achat+user%3Abot
+    // Homelander
+    // https://localhost:3000/?code=y2ldabe9a23v9m4r2p35i89ahpwvz4&scope=user%3Aread%3Achat+user%3Abot
 
     /* Use the code provided from the redirect to cURL and get access and refresh tokens */
+    // Hughie
     // curl -X POST 'https://id.twitch.tv/oauth2/token' \
     //      -H 'Content-Type: application/x-www-form-urlencoded' \
-    //      -d 'client_id=52q9nyo1zjyi5qt2u0al093ol812dm&client_secret=rhyj4a2mjri86va8731c19bxzb1s7n&code=o4cntbjdnofi3n8f2oluwf0fc2h0fm&grant_type=authorization_code&redirect_uri=https://localhost:3000'
+    //      -d 'client_id=36ay5kaqu0m4s5xo3vogcp1cl1u0lv&client_secret=uzh7yd8mh5y3dggnh051w8o6t3ct0z&code=tfi3c7tzvlub1krucq3egiobw122q6&grant_type=authorization_code&redirect_uri=https://localhost:3000'
 
+    // Homelander
     // curl -X POST 'https://id.twitch.tv/oauth2/token' \
     //      -H 'Content-Type: application/x-www-form-urlencoded' \
-    //      -d 'client_id=jx7xc70s2hqd5qwdc9q3bsoz14yq5v&client_secret=hpn7zfnopih559o8rgjps0sm3u7nkj&code=i35q0eq0f44pjdlka7d3vh30f332hx&grant_type=authorization_code&redirect_uri=https://localhost:3000'
+    //      -d 'client_id=s9biimnfxwri7742sedh7f3qguivy1&client_secret=7t7atort1giutcvg00u3xgm10ah1or&code=y2ldabe9a23v9m4r2p35i89ahpwvz4&grant_type=authorization_code&redirect_uri=https://localhost:3000'
 
+    // Billy
     // curl -X POST 'https://id.twitch.tv/oauth2/token' \
     //      -H 'Content-Type: application/x-www-form-urlencoded' \
-    //      -d 'client_id=6zz51egn1r2amiygntijz8w57bfc6o&client_secret=brmreyqr9glhjddjqvsebpmk0hmjna&code=z6f1ccjrv4n4dskc9esypah4umgaol&grant_type=authorization_code&redirect_uri=https://localhost:3000'
+    //      -d 'client_id=u4vussk43p29rkf1unxp1bgv7629dz&client_secret=r2vk14oqyd23t84akmcpysnn8ma6i1&code=2j0o5roumn7rtm004bcdgif4e1kjpj&grant_type=authorization_code&redirect_uri=https://localhost:3000'
 
     /* Resultant access and refresh tokens */
-    // {"access_token":"qyfomgadk5iucvf6vtlwtu0s2igio6","expires_in":15285,"refresh_token":"kqvrqetskxfcij11y0p94xaq1btv3wqovg4y1nsx2z1fkbjzup","scope":["channel:bot","moderation:read","moderator:manage:automod","user:read:chat"],"token_type":"bearer"}
+    // Hughie
+    // {"access_token":"str0dvniwyllnx9rf7fjs7r7prye07","expires_in":13932,"refresh_token":"etx8rd29leyyibj1njaydf4hu192n7jwjnb4pbb57wtv7xy9ag","scope":["channel:bot","moderation:read","moderator:manage:automod","user:read:chat"],"token_type":"bearer"}
 
-    // {"access_token":"32qeuor9vfvtwt6wmzbyoyy5i0hnyf","expires_in":15585,"refresh_token":"wrk5s5teqyv1kerjwisk7tp66uuvzmqs0nf3ire0qfdcxgvxlb","scope":["moderator:manage:automod","user:bot","user:read:chat"],"token_type":"bearer"}
+    // Homelander
+    // {"access_token":"ei5y5afg0f3o1mqjm1exghsch0yjkv","expires_in":15225,"refresh_token":"86ia9se7iwyi30qgqvtdic42n4inq9dgv25k85784r0k3hygvq","scope":["user:bot","user:read:chat"],"token_type":"bearer"}
 
-    // {"access_token":"koiqpzg6micuq4k9hqld6wqwbjsti0","expires_in":13464,"refresh_token":"d1j80hhwv1v1oxxvmy2k4wwdz3b46u88u47d400mdxzx281dfk","scope":["user:bot","user:read:chat"],"token_type":"bearer"}
-
+    // Billy
+    // {"access_token":"0wswmv4gaao47nzjresal89adllw72","expires_in":13697,"refresh_token":"jxjvua7qejbykfe0hvvwiq7ssqibgwuwndfnxlecu9ntwxveau","scope":["moderator:manage:automod","user:bot","user:read:chat"],"token_type":"bearer"}
 
 // 2. Set up the app access token for the respective subscriptions
     /* 
         using client_id and secret to get app access tokens via cURL
     */
 
+    // Hughie
     // curl -X POST 'https://id.twitch.tv/oauth2/token' \
     //      -H 'Content-Type: application/x-www-form-urlencoded' \
-    //      -d 'client_id=52q9nyo1zjyi5qt2u0al093ol812dm&client_secret=rhyj4a2mjri86va8731c19bxzb1s7n&grant_type=client_credentials&redirect_uri=https://localhost:3000'
+    //      -d 'client_id=36ay5kaqu0m4s5xo3vogcp1cl1u0lv&client_secret=uzh7yd8mh5y3dggnh051w8o6t3ct0z&grant_type=client_credentials&redirect_uri=https://localhost:3000'
+    // {"access_token":"ez713753uzqthpm3pcnq7au0z7ir48","expires_in":4752513,"token_type":"bearer"}
 
-    // {"access_token":"88qyp2gggnpphhwhs10puzm7c66gxi","expires_in":5317097,"token_type":"bearer"}
-
+    // Homelander
     // curl -X POST 'https://id.twitch.tv/oauth2/token' \
     //      -H 'Content-Type: application/x-www-form-urlencoded' \
-    //      -d 'client_id=lz7n868l3cquav1d9a38r0hsw8af8p&client_secret=4l6g84e7r0dlyv32qmhale9iqrqby2&grant_type=client_credentials&redirect_uri=https://localhost:3000'
+    //      -d 'client_id=9xhuy6dokxj3m1bd46pu8b355kc7p1&client_secret=bc0ei2e3n1ct4t9r7wmqmnkd8qy6n8&grant_type=client_credentials&redirect_uri=https://localhost:3000'
+    // {"access_token":"hncwbq5lxwv10t59lo113ksz9wrq8a","expires_in":4760213,"token_type":"bearer"}
 
-    // {"access_token":"nclhn7lv47y211ptilfoh3y5nvk3op","expires_in":5191965,"token_type":"bearer"}
-    // 2024/08/08 13:48:00 Successfully generated App Access Token.
-    // 2024/08/08 13:48:00 App Access Token: trp2yxiasidjjo9axfmgz4u6fgzfmv
-    // 2024/08/08 13:48:00 Expires At: 2024-10-11 08:53:49.551756 +0000 UTC
-    // 2024/08/08 13:48:00 Scopes: []
-
+    // Billy
     // curl -X POST 'https://id.twitch.tv/oauth2/token' \
     //      -H 'Content-Type: application/x-www-form-urlencoded' \
-    //      -d 'client_id=6zz51egn1r2amiygntijz8w57bfc6o&client_secret=brmreyqr9glhjddjqvsebpmk0hmjna&grant_type=client_credentials&redirect_uri=https://localhost:3000'
+    //      -d 'client_id=u4vussk43p29rkf1unxp1bgv7629dz&client_secret=r2vk14oqyd23t84akmcpysnn8ma6i1&grant_type=client_credentials&redirect_uri=https://localhost:3000'
+    // {"access_token":"8q7e52t8hibzirdb1o1y7w6wrvmwj0","expires_in":5150836,"token_type":"bearer"}
 
-    // {"access_token":"f7ski8e765o960ee4moi53tz0aoj5t","expires_in":5204816,"token_type":"bearer"}
 
 //3. Subscribe using the following requirements
     /*
@@ -183,8 +182,8 @@ console.log(tokenData);
 //     "type": "channel.chat.message",
 //     "version": "1",
 //     "condition": {
-//         "broadcaster_user_id": "1109317124",
-//         "user_id": "1103563061"
+//         "broadcaster_user_id": "1135845304",
+//         "user_id": "1126926753"
 //     },
 //     "transport": {
 //         "method": "webhook",
@@ -208,15 +207,15 @@ console.log(tokenData);
 // }'
 
 // curl -X POST 'https://api.twitch.tv/helix/eventsub/subscriptions' \
-// -H 'Authorization: Bearer f7ski8e765o960ee4moi53tz0aoj5t' \
-// -H 'Client-Id: 6zz51egn1r2amiygntijz8w57bfc6o' \
+// -H 'Authorization: Bearer ez713753uzqthpm3pcnq7au0z7ir48' \
+// -H 'Client-Id: 36ay5kaqu0m4s5xo3vogcp1cl1u0lv' \
 // -H 'Content-Type: application/json' \
 // -d '{
-//     "type": "channel.chat.user_message_hold",
+//     "type": "channel.chat.message",
 //     "version": "1",
 //     "condition": {
-//         "broadcaster_user_id": "1109317124",
-//         "user_id": "1124970435"
+//         "broadcaster_user_id": "1135845304",
+//         "user_id": "1112905523"
 //     },
 //     "transport": {
 //         "method": "webhook",

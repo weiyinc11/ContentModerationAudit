@@ -56,7 +56,7 @@ app.post("/webhooks/callback", async (req, res) => {
     const messageType = req.header("Twitch-Eventsub-Message-Type");
     if (messageType === "webhook_callback_verification") {
       console.log("Verifying Webhook");
-      return res.status(200).send(req.body.challenge);
+      return res.set('Content-Type', 'text/plain').status(200).send(req.body.challenge);
     }
   
     const { type } = req.body.subscription;
@@ -109,3 +109,110 @@ app.post("/webhooks/callback", async (req, res) => {
 //     }
 //   ]
 // }'
+
+
+
+/* 1a. Make the user access token with the right scopes
+    // Homelander's Account
+    // User Homeland3r1's id: 1112905523
+    // Client id - qc3erad82kt9qk1g6ipyr8hgm6pc81
+    // Client Secret - gjdmpg1qmswtgszrg7uh7428flgdx6
+    // Homelander
+    https://id.twitch.tv/oauth2/authorize
+    ?response_type=code
+    &client_id=qc3erad82kt9qk1g6ipyr8hgm6pc81
+    &redirect_uri=https://localhost:3000
+    &scope=user%3Aread%3Achat+user%3Abot+channel%3Abot
+
+     1b. Use the result URL of the above to grab a code as such:
+    https://localhost:3000/?code=ufasnd4vwq7li0fermlgqprdy3c17o&scope=user%3Aread%3Achat+user%3Abot+channel%3Abot
+
+    // Homelander
+    curl -X POST 'https://id.twitch.tv/oauth2/token' \
+         -H 'Content-Type: application/x-www-form-urlencoded' \
+         -d 'client_id=qc3erad82kt9qk1g6ipyr8hgm6pc81&client_secret=gjdmpg1qmswtgszrg7uh7428flgdx6&code=ufasnd4vwq7li0fermlgqprdy3c17o&grant_type=authorization_code&redirect_uri=https://localhost:3000'
+
+    1c. The result is a json with the access token! Don't need to store this. Just need to make sure that all accounts have an access token with the correct scopes for your subscription. 
+
+    {"access_token":"g2uv9fomyed9qkz8ilmt926bksmqrl","expires_in":14725,"refresh_token":"jz5pjsbxbwtbjr0ogb7pqxhm7zxoeezph58cyxan3qyfg91484","scope":["channel:bot","user:bot","user:read:chat"],"token_type":"bearer"}
+
+    1d. Repeat for other
+    // Hughie's Account
+    // User hughierin's id: 1135845304
+    // User hughierin's client_id: lfll6gbhayfwmfvmuw88n4r539kadm
+    // User hughierin's client_secret: lpo8hfdceb5fsct6cypioj7qw23mf9
+
+
+    https://id.twitch.tv/oauth2/authorize
+    ?response_type=code
+    &client_id=lfll6gbhayfwmfvmuw88n4r539kadm
+    &redirect_uri=https://localhost:3000
+    &scope=channel%3Abot+user%3Aread%3Achat+user%3Abot
+
+    https://localhost:3000/?code=z8mu526yjk1hdmynjapnfrip0hov5j&scope=channel%3Abot+user%3Aread%3Achat+user%3Abot
+
+    curl -X POST 'https://id.twitch.tv/oauth2/token' \
+         -H 'Content-Type: application/x-www-form-urlencoded' \
+         -d 'client_id=lfll6gbhayfwmfvmuw88n4r539kadm&client_secret=lpo8hfdceb5fsct6cypioj7qw23mf9&code=z8mu526yjk1hdmynjapnfrip0hov5j&grant_type=authorization_code&redirect_uri=https://localhost:3000'
+
+    {"access_token":"pqg81p9twpphyku4dqrawxx73uq3ms","expires_in":14038,"refresh_token":"9vhup8y2respwu58fhffezqxdfuu8dxil8u79loldqnmd6ulox","scope":["channel:bot","user:bot","user:read:chat"],"token_type":"bearer"}
+*/
+
+/* 2. Get the app access token with no specific scope
+    Homelander's Account
+    User Homeland3r1's id: 1112905523
+    Client id - qc3erad82kt9qk1g6ipyr8hgm6pc81
+    Client Secret - gjdmpg1qmswtgszrg7uh7428flgdx6
+
+    curl -X POST 'https://id.twitch.tv/oauth2/token' \
+         -H 'Content-Type: application/x-www-form-urlencoded' \
+         -d 'client_id=qc3erad82kt9qk1g6ipyr8hgm6pc81&client_secret=gjdmpg1qmswtgszrg7uh7428flgdx6&grant_type=client_credentials&redirect_uri=https://localhost:3000'
+    
+    {"access_token":"4wj0v1z8sbvub0byu3d60juyr5t84m","expires_in":4737420,"token_type":"bearer"}
+
+    Hughie's Account
+    User hughierin's id: 1135845304
+    User hughierin's client_id: lfll6gbhayfwmfvmuw88n4r539kadm
+    User hughierin's client_secret: lpo8hfdceb5fsct6cypioj7qw23mf9
+
+    curl -X POST 'https://id.twitch.tv/oauth2/token' \
+     -H 'Content-Type: application/x-www-form-urlencoded' \
+     -d 'client_id=lfll6gbhayfwmfvmuw88n4r539kadm&client_secret=lpo8hfdceb5fsct6cypioj7qw23mf9&grant_type=client_credentials&redirect_uri=https://localhost:3000'
+
+    {"access_token":"e1vdytngf8reqasnx9yiruxxsktj6g","expires_in":5418198,"token_type":"bearer"}
+*/
+
+/* 3. Subscribe using the app access token
+    curl -X POST 'https://api.twitch.tv/helix/eventsub/subscriptions' \
+    -H 'Authorization: Bearer e1vdytngf8reqasnx9yiruxxsktj6g' \
+    -H 'Client-Id: lfll6gbhayfwmfvmuw88n4r539kadm' \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "type": "channel.chat.message",
+        "version": "1",
+        "condition": {
+            "broadcaster_user_id": "1135845304",
+            "user_id": "1112905523"
+        },
+        "transport": {
+            "method": "webhook",
+            "callback": "https://touching-willingly-shiner.ngrok-free.app/webhooks/callback",
+            "secret": "ContentMod123"
+        }
+    }'
+
+    Can also use Twitch Command Line Interface: 
+    twitch api post eventsub/subscriptions -b ' {
+        "type": "channel.chat.message",
+        "version": "1",
+        "condition": {
+            "broadcaster_user_id": "1112905523",
+            "user_id": "1135845304"
+        },
+        "transport": {
+            "method": "webhook",
+            "callback": "https://touching-willingly-shiner.ngrok-free.app/webhooks/callback",
+            "secret": "ContentMod123"
+        }
+    }'
+*/

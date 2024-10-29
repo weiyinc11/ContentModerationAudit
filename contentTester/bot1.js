@@ -5,29 +5,44 @@ const path = require("path");
 
 // https://id.twitch.tv/oauth2/authorize
 // ?response_type=code
-// &client_id=rs9hgyu1y4hz77inrvz4aoc50ccmwi
+// &client_id=3mmjffutkuzt1o3novz9855mfsbpy9
 // &redirect_uri=https://localhost:3000
 // &scope=chat%3Aedit+chat%3Aread
 
-// https://localhost:3000/?code=c97ia2fmg2gc9cbozwufmebd7jj9l2&scope=chat%3Aedit+chat%3Aread
+// https://localhost:3000/?code=gtre6duya1nfd3ah5qnxa72wtrtk2o&scope=chat%3Aedit+chat%3Aread
 
 // curl -X POST 'https://id.twitch.tv/oauth2/token' \
 //      -H 'Content-Type: application/x-www-form-urlencoded' \
-//      -d 'client_id=rs9hgyu1y4hz77inrvz4aoc50ccmwi&client_secret=jyk4kon6cbxp62smnf105gm8tk7oh5&code=c97ia2fmg2gc9cbozwufmebd7jj9l2&grant_type=authorization_code&redirect_uri=https://localhost:3000'
+//      -d 'client_id=3mmjffutkuzt1o3novz9855mfsbpy9&client_secret=9dujz6nk5enf5fcnlydd1hq8n67yn9&code=gtre6duya1nfd3ah5qnxa72wtrtk2o&grant_type=authorization_code&redirect_uri=https://localhost:3000'
 
-// {"access_token":"0lbjllhsokby27ckl4h3gs8qa89a43","expires_in":14142,"refresh_token":"7kxq01hjjdloaxgshhiyv56pfb7j6qb5dj1fsq5ozbl2cnjxmi","scope":["chat:edit","chat:read"],"token_type":"bearer"}
+// {"access_token":"xo1k97dm83vqzpfenh0zhrti1ow1f4","expires_in":14256,"refresh_token":"6ntqm4bi3wvho362y2oi1reyfq5nd0fdvohxbxcq0qpef41n7g","scope":["chat:edit","chat:read"],"token_type":"bearer"}
+
+// ---------------------------------------------------------------------------------------------------------------------------
+
+// https://id.twitch.tv/oauth2/authorize
+// ?response_type=code
+// &client_id=4833yyasbekihgj8in8e2hjqco5m16
+// &redirect_uri=https://localhost:3000
+// &scope=chat%3Aedit+chat%3Aread
+
+// https://localhost:3000/?code=k7ds3q7ts9vna5g4dw8florfftex44&scope=chat%3Aedit+chat%3Aread
+
+// curl -X POST 'https://id.twitch.tv/oauth2/token' \
+//      -H 'Content-Type: application/x-www-form-urlencoded' \
+//      -d 'client_id=4833yyasbekihgj8in8e2hjqco5m16&client_secret=80vr3zvtuemc2ljs1f34wj1fz368y7&code=k7ds3q7ts9vna5g4dw8florfftex44&grant_type=authorization_code&redirect_uri=https://localhost:3000'
+
+// {"access_token":"jde9l1x6klkqzig4m2pnzhqn4nysc1","expires_in":14832,"refresh_token":"54uq7b3b6wivu7h2e4gdgxeexwb473k70jocnxdt6exexxz9yd","scope":["chat:edit","chat:read"],"token_type":"bearer"}
 
 var access_token = '';
-var refresh_token = '7kxq01hjjdloaxgshhiyv56pfb7j6qb5dj1fsq5ozbl2cnjxmi';
+var refresh_token = '54uq7b3b6wivu7h2e4gdgxeexwb473k70jocnxdt6exexxz9yd';
 var expires_in = 0;
-const client_id = 'rs9hgyu1y4hz77inrvz4aoc50ccmwi';
-const client_secret = 'jyk4kon6cbxp62smnf105gm8tk7oh5';
-var result = [];
+const client_id = '4833yyasbekihgj8in8e2hjqco5m16';
+const client_secret = '80vr3zvtuemc2ljs1f34wj1fz368y7';
 
 function setup(resultp){
     exec(`curl -X POST 'https://id.twitch.tv/oauth2/token' \
         -H 'Content-Type: application/x-www-form-urlencoded' \
-        -d 'client_id=${client_id}&client_secret=${client_secret}&code=sjpneowbukk1i8a9dzw1vzl658q8x4&grant_type=authorization_code&redirect_uri=http://localhost:3000'`, (error, stdout, stderr) => {
+        -d 'client_id=${client_id}&client_secret=${client_secret}&code=oy5c7xwcatfvnr7l4w6xnyi3gx9nyb&grant_type=authorization_code&redirect_uri=http://localhost:3000'`, (error, stdout, stderr) => {
             if (error) {
             console.error(`exec error: ${error}`);
             return;
@@ -99,7 +114,7 @@ function rollDice () {
             const data = await fs.promises.readFile(path.join(directory, fileName), 'utf8');
             
             const json_data = JSON.parse(data);
-            const end = Math.floor(json_data.length / 2);
+            const end = Math.floor(json_data.length+1);
             const start = 0;
 
             let file_data = [];
@@ -149,17 +164,24 @@ function renewToken(callback) {
     });
 }
 
-
+let msg_sent = [new Date(), 0];
 async function processFileData(fileData, client, target, startIndex) {
     return new Promise((resolve) => {
         let index = startIndex;
-        let count = 10;
+        let count = 5;
 
         const intervalId = setInterval(() => {
-            if (count > 0 && index < Math.floor(fileData.length / 2)) {
-                client.say(target, fileData[index].text);
-                index++;
-                count--;
+            if (count > 0 && index < Math.floor(fileData.length)) {
+                try {
+                    msg_sent = [new Date(), fileData[index].text]
+                    // console.log(`Message: ${fileData[index].text} was sent at ${now.getHours()} : ${now.getMinutes()}`)
+                    // console.log(`Message: ${fileData[index].text} was sent at ${msg_sent[0]}`)
+                    client.say(target, fileData[index].text);
+                    index++;
+                    count--;
+                } catch {
+                    t = 0;
+                }
             } else {
                 clearInterval(intervalId);
                 resolve(index + 1);
@@ -174,7 +196,7 @@ async function run(client, target) {
     for (let i = 0; i < data.length; i++) {
         let index = 0;
 
-        while (index < Math.floor(data[i].length / 2)) {
+        while (index < Math.floor(data[i].length)) {
             index = await processFileData(data[i], client, target, index);
             if (index < data[i].length) {
                 console.log('Pausing for 10 seconds...');
@@ -186,10 +208,9 @@ async function run(client, target) {
     }
 }
 
-
 // setup(result);
 // -------------------------------------------------------------------------------------------------------------------
-
+let msg_result = [];
 function autoRenew(){
     renewToken(function(res) {
         access_token = res.access_token;
@@ -199,11 +220,11 @@ function autoRenew(){
         // Define configuration options
         const opts = {
             identity: {
-            username: 'Littleelly000',
+            username: 'homeland3r1',
             password: String(access_token)
             },
             channels: [
-            'bb3e08d1900c43886e73e600',
+            'hughierin',
             ]
         };
         
@@ -223,24 +244,33 @@ function autoRenew(){
         }, expires_in * 1000);
         
         // Called every time a message comes in
-        function onMessageHandler (target, context, msg, self) {
-            if (self) { return; } // Ignore messages from the bot
-        
-            // Remove whitespace from chat message
-            const commandName = msg.trim();
-        
-            // If the command is known, let's execute it
-            if (commandName === '!dice') {
-                const num = rollDice();
-                client.say(target, `You rolled a ${num}`);
-                console.log(`* Executed ${commandName} command`);
-            } else if (commandName === '!audit1') {
-                run(client, target);
-                console.log(`* Executed ${commandName} command`);
+        function onMessageHandler (target, tags, msg, self) {
+            if (self) { 
+                // const now = new Date()
+                // if (msg_sent[1] == msg){
+                //     msg_result.push({'user': tags['username'], 'message': msg, 'processTime': (now.getTime() - msg_sent[0].getTime()), 'sent_at': msg_sent[0]})
+                //     console.log(`${msg} was processed for ${(now.getTime() - msg_sent[0].getTime())} milliseconds`)
+                //     console.log(tags['username'], " : ", msg)
+                // } else {
+                //     // result.append()
+                //     console.log(`Moderated message: ${msg} sent at ${msg_sent[0]}`)
+                // }
+                return
             } else {
-                let temp = 0;
+                if (msg.includes("!")){
+                    if (msg === '!dice') {
+                        const num = rollDice();
+                        client.say(target, `You rolled a ${num}`);
+                        console.log(`* Executed ${msg} command`);
+                    } else if (msg === '!audit') {
+                        run(client, target);
+                        console.log(`* Executed ${msg} command`);
+                    }
+                    else {
+                        const temp = 0;
+                    }
+                }
             }
-
         }
     });
 }

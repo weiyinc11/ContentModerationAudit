@@ -149,7 +149,7 @@ function renewToken(callback) {
     });
 }
 
-
+let msg_sent = [new Date(), 0];
 async function processFileData(fileData, client, target, startIndex) {
     return new Promise((resolve) => {
         let index = startIndex;
@@ -157,6 +157,7 @@ async function processFileData(fileData, client, target, startIndex) {
 
         const intervalId = setInterval(() => {
             if (count > 0 && index < fileData.length) {
+                msg_sent = [new Date(), fileData[index].text]
                 client.say(target, fileData[index].text);
                 index++;
                 count--;
@@ -170,9 +171,8 @@ async function processFileData(fileData, client, target, startIndex) {
 
 async function run(client, target) {
     const data = await getData();
-
     for (let i = 0; i < data.length; i++) {
-        let fileIndex = Math.floor(data[i].length / 2); 
+        let fileIndex = Math.floor(data[i].length); 
 
         while (fileIndex < data[i].length) {
             fileIndex = await processFileData(data[i], client, target, fileIndex);
@@ -186,10 +186,26 @@ async function run(client, target) {
     }
 }
 
+function jsonToCsv(jsonData) {
+    let csv = '';
+    
+    // Extract headers
+    const headers = Object.keys(jsonData[0]);
+    csv += headers.join(',') + '\n';
+    
+    // Extract values
+    jsonData.forEach(obj => {
+        const values = headers.map(header => obj[header]);
+        csv += values.join(',') + '\n';
+    });
+    
+    return csv;
+}
+
 
 // setup(result);
 // -------------------------------------------------------------------------------------------------------------------
-
+let msg_result = [];
 function autoRenew(){
     renewToken(function(res) {
         access_token = res.access_token;
@@ -203,7 +219,7 @@ function autoRenew(){
             password: String(access_token)
             },
             channels: [
-            'bb3e08d1900c43886e73e600',
+            'hughierin',
             ]
         };
         
@@ -222,25 +238,59 @@ function autoRenew(){
             autoRenew();
         }, expires_in * 1000);
         
-        // Called every time a message comes in
-        function onMessageHandler (target, context, msg, self) {
-            if (self) { return; } // Ignore messages from the bot
-        
-            // Remove whitespace from chat message
-            const commandName = msg.trim();
-        
-            // If the command is known, let's execute it
-            if (commandName === '!dice') {
-                const num = rollDice();
-                client.say(target, `You rolled a ${num}`);
-                console.log(`* Executed ${commandName} command`);
-            } else if (commandName === '!audit2') {
-                run(client, target);
-                console.log(`* Executed ${commandName} command`);
+        done_count = 0
+        function onMessageHandler (target, tags, msg, self) {
+            if (self) { 
+                // const now = new Date()
+                // if (msg_sent[1] == msg){
+                //     msg_result.push({'user': tags['username'], 'message': msg, 'processTime': (now.getTime() - msg_sent[0].getTime()), 'sent_at': msg_sent[0]})
+                //     console.log(`${msg} was processed for ${(now.getTime() - msg_sent[0].getTime())} milliseconds`)
+                //     console.log(tags['username'], " : ", msg)
+                // } else {
+                //     // result.append()
+                //     console.log(`Moderated message: ${msg} sent at ${msg_sent[0]}`)
+                // }
+                return
             } else {
-                const temp = 0;
+                if (msg == "done"){
+                    const csvData = jsonToCsv(msg_result);
+                    fs.writeFile(`results/data${done_count}.csv`, csvData, (err) => {
+                        if (err) {
+                          console.error('Error writing CSV file:', err);
+                        } else {
+                          console.log('CSV file written successfully!');
+                          done_count = done_count + 1;
+                        }
+                    });
+                } else {
+                    const now = new Date()
+                    msg_result.push({'user': tags['username'], 'message': msg, 'processTime': (now.getTime() - msg_sent[0].getTime()), 'sent_at': msg_sent[0]})
+                    console.log(`${msg} was processed for ${(now.getTime() - msg_sent[0].getTime())} milliseconds`)
+                    console.log(tags['username'], " : ", msg)
+                    // console.log(msg_result)
+                }
             }
         }
+
+        // Called every time a message comes in
+        // function onMessageHandler (target, context, msg, self) {
+        //     if (self) { return; } // Ignore messages from the bot
+        
+        //     // Remove whitespace from chat message
+        //     const commandName = msg.trim();
+        
+        //     // If the command is known, let's execute it
+        //     if (commandName === '!dice') {
+        //         const num = rollDice();
+        //         client.say(target, `You rolled a ${num}`);
+        //         console.log(`* Executed ${commandName} command`);
+        //     } else if (commandName === '!audit2') {
+        //         run(client, target);
+        //         console.log(`* Executed ${commandName} command`);
+        //     } else {
+        //         console.log(commandName);
+        //     }
+        // }
     });
 }
 

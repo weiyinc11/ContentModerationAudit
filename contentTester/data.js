@@ -39,4 +39,4 @@ async function csvToJson(csv_string){
 }
 
 // Import the csv file into the same folder as this data.js file. 
-read_csv('profanity_en.csv');
+read_csv('/content_moderation_twitch_examples.csv');

@@ -181,12 +181,13 @@ async function processFileData(fileData, client, target, startIndex) {
                     count--;
                 } catch {
                     index++;
+                    count--;
                 }
             } else {
                 clearInterval(intervalId);
                 resolve(index + 1);
             }
-        }, 2000);
+        }, 1500);
     });
 }
 
@@ -195,7 +196,6 @@ async function run(client, target) {
 
     for (let i = 0; i < data.length; i++) {
         let index = 0;
-
         while (index < Math.floor(data[i].length)) {
             index = await processFileData(data[i], client, target, index);
             if (index < data[i].length) {

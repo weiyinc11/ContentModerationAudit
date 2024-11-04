@@ -155,6 +155,7 @@ async function processFileData(fileData, client, target, startIndex) {
         let index = startIndex;
         let count = 5;
 
+<<<<<<< HEAD
         let randomWaitMsgTime = 1000
         const intervalId = setInterval(() => {
             if (count > 0 && index < fileData.length) {
@@ -165,11 +166,23 @@ async function processFileData(fileData, client, target, startIndex) {
                 count--;
             } else if (count == 1){
                 count--;
+=======
+        const intervalId = setInterval(() => {
+            if (count > 0 && index < fileData.length) {
+                msg_sent = [new Date(), fileData[index].text]
+                client.say(target, fileData[index].text);
+                index++;
+                count--;
+>>>>>>> 549ae0ee534a75199bef1e821ae9e803e87582bd
             } else {
                 clearInterval(intervalId);
                 resolve(index + 1);
             }
+<<<<<<< HEAD
         }, randomWaitMsgTime);
+=======
+        }, 5000);
+>>>>>>> 549ae0ee534a75199bef1e821ae9e803e87582bd
     });
 }
 
@@ -242,7 +255,11 @@ function autoRenew(){
             autoRenew();
         }, expires_in * 1000);
         
+<<<<<<< HEAD
         done_count = 1
+=======
+        done_count = 0
+>>>>>>> 549ae0ee534a75199bef1e821ae9e803e87582bd
         function onMessageHandler (target, tags, msg, self) {
             if (self) { 
                 // const now = new Date()
@@ -257,6 +274,7 @@ function autoRenew(){
                 return
             } else {
                 if (msg == "done"){
+<<<<<<< HEAD
 
                     const headers = Object.keys(msg_result[0]);
                     const csvRows = [headers.join(',')];
@@ -292,6 +310,10 @@ function autoRenew(){
                     }
 
                     fs.writeFile(`${__dirname}/results/${folderName}/data${done_count}.csv`, csvData, (err) => {
+=======
+                    const csvData = jsonToCsv(msg_result);
+                    fs.writeFile(`results/data${done_count}.csv`, csvData, (err) => {
+>>>>>>> 549ae0ee534a75199bef1e821ae9e803e87582bd
                         if (err) {
                           console.error('Error writing CSV file:', err);
                         } else {
@@ -299,7 +321,10 @@ function autoRenew(){
                           done_count = done_count + 1;
                         }
                     });
+<<<<<<< HEAD
 
+=======
+>>>>>>> 549ae0ee534a75199bef1e821ae9e803e87582bd
                 } else {
                     const now = new Date()
                     msg_result.push({'user': tags['username'], 'message': msg, 'processTime': (now.getTime() - msg_sent[0].getTime()), 'sent_at': msg_sent[0]})
@@ -309,6 +334,29 @@ function autoRenew(){
                 }
             }
         }
+<<<<<<< HEAD
+=======
+
+        // Called every time a message comes in
+        // function onMessageHandler (target, context, msg, self) {
+        //     if (self) { return; } // Ignore messages from the bot
+        
+        //     // Remove whitespace from chat message
+        //     const commandName = msg.trim();
+        
+        //     // If the command is known, let's execute it
+        //     if (commandName === '!dice') {
+        //         const num = rollDice();
+        //         client.say(target, `You rolled a ${num}`);
+        //         console.log(`* Executed ${commandName} command`);
+        //     } else if (commandName === '!audit2') {
+        //         run(client, target);
+        //         console.log(`* Executed ${commandName} command`);
+        //     } else {
+        //         console.log(commandName);
+        //     }
+        // }
+>>>>>>> 549ae0ee534a75199bef1e821ae9e803e87582bd
     });
 }
 

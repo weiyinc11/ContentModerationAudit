@@ -29,7 +29,7 @@ def make_json(csvFilePath):
         json.dump(data, jsonf)
 
 def setupDataToSendFiles():
-    currDateDataToSendPath = ''
+    currDateDataToSend = ''
 
     listofFilesinDTS = os.listdir(dataToSendCSV)
     for each in listofFilesinDTS: 

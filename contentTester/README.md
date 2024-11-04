@@ -5,6 +5,14 @@ Documentation for Implementing tmi.js for Chatbot and results data extraction bo
 2. <b>Homeland3r1</b> <br/> Userid: #1112905523 <br/> Client ID: 4833yyasbekihgj8in8e2hjqco5m16 <br/> Client Secret: 80vr3zvtuemc2ljs1f34wj1fz368y7
 3. <b>Hughierin</b>
 
+## Step 1.1 : Running the experiment
+1. Load all csv files that include a 'text' header for messages to be sent a folder named after the day's 'mm-dd-yyyy' in the 'dataToSendCSV' folder. Also ensure that the files are named as dataSend_1, dataSend_2, etc.  
+2. Run 'python data.py' in the terminal to begin the setup process - this includes converting the files from csv to json files. !Make sure to check that all the files are there (just a sanity check)
+3. Open up a split terminal and run 'node bot1.js' and 'node bot2.js' in separate terminals. This will trigger the chatbot and listener chat bot to begin the process. 
+4. Go to your chatbot's account on a web browser and open up the host channel's chat. Enter '!dice' command to ensure that all bots are enabled and working. Then, '!audit' will trigger the experiment to run. 
+5. As a new result file is produced after each file, make sure to check every now and then that a corresponding modData folder is in the results/'mm-dd-yyyy' folder and is being populated by each new data results file. 
+6. Once all files are parsed through, check to see that all files correspond to result and then quit each program. 
+
 ## Step 1 : Implicit Flow User Access Tokens
 https://id.twitch.tv/oauth2/authorize
 ?response_type=code
@@ -33,11 +41,10 @@ This can be found here: ![Bot1 User Declaration Codes](readMeimages/bot1User.png
 
 This can be found here in bot2.js file ![Bot2 User Declaration Codes](readMeimages/bot2User.png)
 
-3. Folders 'dataToSend' and 'results' will house the json datasets that need to be sent and the extracted json to csv file.<br/> 
-<b>Note: jsons in 'dataToSend' must include a text column that declares the messages to be sent.</b>
+3. <b>data.py</b> must be run before the experiment begins. This file takes care of converting the csv files of dataToSend to json, ensures that the dates of each experiment run are recorded, and handles the differences between sent and recieved messages in the channel. 
 
-## Step 3 : Running the experiment
-Start by including split terminals to run 'node bot1.js' and 'node bot2.js' simultaneously. 
+4. Folders 'dataToSend' and 'results' will house the json datasets that need to be sent and the extracted json to csv file.<br/> 
+<b>Note: jsons in 'dataToSend' must include a text column that declares the messages to be sent.</b>
 
 Documentation for Implementing Twitch EventSub and API for Results Bot
 ===============

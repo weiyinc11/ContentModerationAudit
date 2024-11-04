@@ -170,24 +170,33 @@ async function processFileData(fileData, client, target, startIndex) {
         let index = startIndex;
         let count = 5;
 
+        let randomWaitMsgTime = 4000
         const intervalId = setInterval(() => {
             if (count > 0 && index < Math.floor(fileData.length)) {
-                try {
-                    msg_sent = [new Date(), fileData[index].text]
-                    // console.log(`Message: ${fileData[index].text} was sent at ${now.getHours()} : ${now.getMinutes()}`)
-                    // console.log(`Message: ${fileData[index].text} was sent at ${msg_sent[0]}`)
-                    client.say(target, fileData[index].text);
-                    index++;
-                    count--;
-                } catch {
-                    index++;
-                    count--;
+                if (count == 1){
+                    try {
+                        msg_sent = [new Date(), fileData[index].text]
+                        client.say(target, fileData[index].text);
+                        count--;
+                    } catch {
+                        count--;
+                    }
+                } else {
+                    try {
+                        msg_sent = [new Date(), fileData[index].text]
+                        client.say(target, fileData[index].text);
+                        index++;
+                        count--;
+                    } catch {
+                        index++;
+                        count--;
+                    }
                 }
             } else {
                 clearInterval(intervalId);
                 resolve(index + 1);
             }
-        }, 1500);
+        }, randomWaitMsgTime);
     });
 }
 

@@ -155,17 +155,21 @@ async function processFileData(fileData, client, target, startIndex) {
         let index = startIndex;
         let count = 5;
 
+        let randomWaitMsgTime = 1000
         const intervalId = setInterval(() => {
             if (count > 0 && index < fileData.length) {
                 msg_sent = [new Date(), fileData[index].text]
+                randomWaitMsgTime = len(fileData[index].text) * 500 / 2
                 client.say(target, fileData[index].text);
                 index++;
+                count--;
+            } else if (count == 1){
                 count--;
             } else {
                 clearInterval(intervalId);
                 resolve(index + 1);
             }
-        }, 5000);
+        }, randomWaitMsgTime);
     });
 }
 
@@ -238,7 +242,7 @@ function autoRenew(){
             autoRenew();
         }, expires_in * 1000);
         
-        done_count = 0
+        done_count = 1
         function onMessageHandler (target, tags, msg, self) {
             if (self) { 
                 // const now = new Date()
@@ -253,8 +257,41 @@ function autoRenew(){
                 return
             } else {
                 if (msg == "done"){
-                    const csvData = jsonToCsv(msg_result);
-                    fs.writeFile(`results/data${done_count}.csv`, csvData, (err) => {
+
+                    const headers = Object.keys(msg_result[0]);
+                    const csvRows = [headers.join(',')];
+
+                    msg_result.forEach(obj => {
+                        const row = headers.map(header => {
+                            const value = obj[header];
+                            return `"${value.toString().replace(/"/g, '""')}"`;
+                        }).join(',');
+                        csvRows.push(row);
+                    });
+                
+                    const csvData = csvRows.join('\n');
+                    
+                    const now = new Date() 
+                    const yyyy = now.getFullYear();
+                    let mm = now.getMonth() + 1;
+                    let dd = now.getDate();
+                    if (dd < 10) dd = '0' + dd;
+                    if (mm < 10) mm = '0' + mm;
+                    const folderName = mm + '-' + dd + '-' + yyyy;
+
+
+                    console.log(__dirname)
+                    var my_dir = `${__dirname}/results/${folderName}`; 
+                    var my_dirMod = `${__dirname}/results/${folderName}/modData`; 
+                    if (!fs.existsSync(my_dir)){
+                        fs.mkdirSync(my_dir);
+                    }
+
+                    if (!fs.existsSync(my_dirMod)){
+                        fs.mkdirSync(my_dirMod);
+                    }
+
+                    fs.writeFile(`${__dirname}/results/${folderName}/data${done_count}.csv`, csvData, (err) => {
                         if (err) {
                           console.error('Error writing CSV file:', err);
                         } else {
@@ -262,6 +299,7 @@ function autoRenew(){
                           done_count = done_count + 1;
                         }
                     });
+
                 } else {
                     const now = new Date()
                     msg_result.push({'user': tags['username'], 'message': msg, 'processTime': (now.getTime() - msg_sent[0].getTime()), 'sent_at': msg_sent[0]})
@@ -271,26 +309,6 @@ function autoRenew(){
                 }
             }
         }
-
-        // Called every time a message comes in
-        // function onMessageHandler (target, context, msg, self) {
-        //     if (self) { return; } // Ignore messages from the bot
-        
-        //     // Remove whitespace from chat message
-        //     const commandName = msg.trim();
-        
-        //     // If the command is known, let's execute it
-        //     if (commandName === '!dice') {
-        //         const num = rollDice();
-        //         client.say(target, `You rolled a ${num}`);
-        //         console.log(`* Executed ${commandName} command`);
-        //     } else if (commandName === '!audit2') {
-        //         run(client, target);
-        //         console.log(`* Executed ${commandName} command`);
-        //     } else {
-        //         console.log(commandName);
-        //     }
-        // }
     });
 }
 

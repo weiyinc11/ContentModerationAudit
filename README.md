@@ -1,3 +1,6 @@
+# External links
+- Google Drive Folder: https://drive.google.com/drive/folders/1CYsKyxOVnaGRhnkpDvZeK9JMP-_wZZjc?usp=drive_link
+
 # Documentation for Running Bots
 
 ## 1. File Structure

@@ -2,6 +2,9 @@ const { exec } = require('child_process');
 const tmi = require('tmi.js');
 const fs = require('fs');
 const path = require("path");
+const os = require('os');
+const json2csv = require('json2csv').parse;
+var process = require('process');
 
 // https://id.twitch.tv/oauth2/authorize
 // ?response_type=code
@@ -95,9 +98,14 @@ function rollDice () {
             return fs.statSync(filePath).isFile();
         });
 
+        count = 1
         for (const fileName of filenames) {
+            // get the dataSend number so that we don't need to rename the files but instead done_count goes by the starting file number-- this allows the results files to correspond to the csv.
+            if (count == 1){
+                done_count = fileName.split('_')[1].split(".")[0]
+            }
             const data = await fs.promises.readFile(path.join(directory, fileName), 'utf8');
-            
+
             const json_data = JSON.parse(data);
             const end = Math.floor(json_data.length / 2);
             const start = 0;
@@ -109,6 +117,7 @@ function rollDice () {
             }
 
             dataSection.push(file_data);
+            count++;
         }
     } catch (err) {
         console.error('Error:', err);
@@ -155,7 +164,6 @@ async function processFileData(fileData, client, target, startIndex) {
         let index = startIndex;
         let count = 5;
 
-<<<<<<< HEAD
         let randomWaitMsgTime = 1000
         const intervalId = setInterval(() => {
             if (count > 0 && index < fileData.length) {
@@ -166,23 +174,11 @@ async function processFileData(fileData, client, target, startIndex) {
                 count--;
             } else if (count == 1){
                 count--;
-=======
-        const intervalId = setInterval(() => {
-            if (count > 0 && index < fileData.length) {
-                msg_sent = [new Date(), fileData[index].text]
-                client.say(target, fileData[index].text);
-                index++;
-                count--;
->>>>>>> 549ae0ee534a75199bef1e821ae9e803e87582bd
             } else {
                 clearInterval(intervalId);
                 resolve(index + 1);
             }
-<<<<<<< HEAD
         }, randomWaitMsgTime);
-=======
-        }, 5000);
->>>>>>> 549ae0ee534a75199bef1e821ae9e803e87582bd
     });
 }
 
@@ -219,10 +215,66 @@ function jsonToCsv(jsonData) {
     return csv;
 }
 
+async function getNextFile(){
+    const files = await fs.promises.readdir(path.join(__dirname, 'dataToSend'));
+
+    const filenames = files.filter(file => {
+        const filePath = path.join(path.join(__dirname, 'dataToSend'), file);
+        return fs.statSync(filePath).isFile();
+    });
+
+    nextFile = filenames[0]
+    console.log(nextFile)
+    
+    if (fs.existsSync(path.join(__dirname, 'dataSendCurrNum.json'))){
+        fs.writeFileSync(path.join(__dirname, 'dataSendCurrNum.json'), JSON.stringify([{"current_json":nextFile,"fileNum":done_count}]), (err) => {
+            if (err) {
+                console.error('Error writing CSV file:', err);
+            }
+        });
+    }
+    return nextFile
+}
+
+const write = async (fileName, fields, data) => {
+
+    const now = new Date() 
+    const yyyy = now.getFullYear();
+    let mm = now.getMonth() + 1;
+    let dd = now.getDate();
+    if (dd < 10) dd = '0' + dd;
+    if (mm < 10) mm = '0' + mm;
+    const folderName = mm + '-' + dd + '-' + yyyy;
+    // output file in the same folder
+    var my_dir = `${__dirname}/results/${folderName}`; 
+    // const filename = path.join(my_dir,  `${fileName}`);
+    let rows;
+    // If file doesn't exist, we will create new file and add rows with headers.    
+    if (!fs.existsSync(fileName)) {
+        console.log("Creating file to write to...");
+        rows = json2csv(data, { header: true });
+        fs.writeFileSync(fileName, rows, (err) => {
+            if (err) {
+                console.error('Error writing CSV file:', err);
+            }
+        });
+        fs.appendFileSync(fileName, "\r\n");
+    } else {
+        // Rows without headers.
+        rows = json2csv(data, { header: false });
+         // Append file function can create new file too.
+        fs.appendFileSync(fileName, rows);
+        // Always add new line if file already exists.
+        fs.appendFileSync(fileName, "\r\n");
+    }
+    console.log("CSV file written successfully! ");
+}
+
 
 // setup(result);
 // -------------------------------------------------------------------------------------------------------------------
 let msg_result = [];
+let done_count = -1;
 function autoRenew(){
     renewToken(function(res) {
         access_token = res.access_token;
@@ -255,40 +307,46 @@ function autoRenew(){
             autoRenew();
         }, expires_in * 1000);
         
-<<<<<<< HEAD
-        done_count = 1
-=======
-        done_count = 0
->>>>>>> 549ae0ee534a75199bef1e821ae9e803e87582bd
         function onMessageHandler (target, tags, msg, self) {
             if (self) { 
-                // const now = new Date()
-                // if (msg_sent[1] == msg){
-                //     msg_result.push({'user': tags['username'], 'message': msg, 'processTime': (now.getTime() - msg_sent[0].getTime()), 'sent_at': msg_sent[0]})
-                //     console.log(`${msg} was processed for ${(now.getTime() - msg_sent[0].getTime())} milliseconds`)
-                //     console.log(tags['username'], " : ", msg)
-                // } else {
-                //     // result.append()
-                //     console.log(`Moderated message: ${msg} sent at ${msg_sent[0]}`)
-                // }
                 return
             } else {
                 if (msg == "done"){
-<<<<<<< HEAD
-
-                    const headers = Object.keys(msg_result[0]);
-                    const csvRows = [headers.join(',')];
-
-                    msg_result.forEach(obj => {
-                        const row = headers.map(header => {
-                            const value = obj[header];
-                            return `"${value.toString().replace(/"/g, '""')}"`;
-                        }).join(',');
-                        csvRows.push(row);
-                    });
-                
-                    const csvData = csvRows.join('\n');
+                    if(fs.existsSync(path.join(__dirname, 'lastSent.json'))){
+                        fs.unlink(path.join(__dirname, 'lastSent.json'), (err) => {
+                            if (err) {
+                                console.error(`Error removing lastSent file: ${err}`)
+                            }
+                        })
+                    }
+                    // remove the lastSent.json file
                     
+                    curr = path.join(__dirname, 'dataSendCurrNum.json');
+                    let data = JSON.parse(fs.readFileSync(curr, 'utf-8'))
+                    done_count = data[0]['fileNum']
+                    fileNameCurr = data[0]['current_json']
+                    // get the currFileName
+
+                    fs.unlink(path.join(__dirname, `dataToSend/${fileNameCurr}`), (err) => {
+                        if (err) {
+                            console.error(`Error removing file: ${err}`)
+                        }
+                    })
+                    // remove the currFile from Datatosend
+                    done_count = done_count + 1;
+
+                    // increment done count
+
+                    let nextFileName = getNextFile();
+
+                } else {
+                    t = path.join(__dirname, 'dataSendCurrNum.json');
+                    let data = JSON.parse(fs.readFileSync(t, 'utf-8'))
+                    done_count = data[0]['fileNum']
+                    fileNameCurr = data[0]['current_json']
+                    console.log(`File written to: ${fileNameCurr}`)
+                    console.log(`File num: ${done_count}`)
+
                     const now = new Date() 
                     const yyyy = now.getFullYear();
                     let mm = now.getMonth() + 1;
@@ -296,7 +354,7 @@ function autoRenew(){
                     if (dd < 10) dd = '0' + dd;
                     if (mm < 10) mm = '0' + mm;
                     const folderName = mm + '-' + dd + '-' + yyyy;
-
+                    
 
                     console.log(__dirname)
                     var my_dir = `${__dirname}/results/${folderName}`; 
@@ -309,54 +367,29 @@ function autoRenew(){
                         fs.mkdirSync(my_dirMod);
                     }
 
-                    fs.writeFile(`${__dirname}/results/${folderName}/data${done_count}.csv`, csvData, (err) => {
-=======
-                    const csvData = jsonToCsv(msg_result);
-                    fs.writeFile(`results/data${done_count}.csv`, csvData, (err) => {
->>>>>>> 549ae0ee534a75199bef1e821ae9e803e87582bd
+
+                    curr = path.join(__dirname, 'dataSendCurrNum.json');
+                    var fileCurrData = JSON.parse(fs.readFileSync(curr, 'utf-8'))
+                    done_count = fileCurrData[0]['fileNum']
+                    currFileName = fileCurrData[0]['current_json']
+
+                    console.log("Creating file to store progress...");
+                    fs.writeFileSync(path.join(__dirname, 'lastSent.json'), JSON.stringify([{"dataToSendFile": currFileName, "msg": msg}]), (err) => {
                         if (err) {
-                          console.error('Error writing CSV file:', err);
-                        } else {
-                          console.log('CSV file written successfully!');
-                          done_count = done_count + 1;
+                            console.error('Error writing CSV file:', err);
                         }
                     });
-<<<<<<< HEAD
-
-=======
->>>>>>> 549ae0ee534a75199bef1e821ae9e803e87582bd
-                } else {
-                    const now = new Date()
-                    msg_result.push({'user': tags['username'], 'message': msg, 'processTime': (now.getTime() - msg_sent[0].getTime()), 'sent_at': msg_sent[0]})
-                    console.log(`${msg} was processed for ${(now.getTime() - msg_sent[0].getTime())} milliseconds`)
-                    console.log(tags['username'], " : ", msg)
-                    // console.log(msg_result)
+                    
+                    write(path.join(my_dir, `${fileNameCurr.split('.')[0]}_${done_count}.csv`), ['user', 'message', 'processTime', 'sent_at'], [{'user': tags['username'], 'message': msg, 'processTime': (now.getTime() - msg_sent[0].getTime()), 'sent_at': msg_sent[0]}])
                 }
             }
+            console.log(`Length of dir: ${fs.readdirSync(path.join(__dirname, 'dataToSend')).length}`)
+            if(parseInt(fs.readdirSync(path.join(__dirname, 'dataToSend')).length) == parseInt(0)){
+                client.say(target, `Experiment Complete`);
+                client.disconnect();
+                process.exit(0);
+            }
         }
-<<<<<<< HEAD
-=======
-
-        // Called every time a message comes in
-        // function onMessageHandler (target, context, msg, self) {
-        //     if (self) { return; } // Ignore messages from the bot
-        
-        //     // Remove whitespace from chat message
-        //     const commandName = msg.trim();
-        
-        //     // If the command is known, let's execute it
-        //     if (commandName === '!dice') {
-        //         const num = rollDice();
-        //         client.say(target, `You rolled a ${num}`);
-        //         console.log(`* Executed ${commandName} command`);
-        //     } else if (commandName === '!audit2') {
-        //         run(client, target);
-        //         console.log(`* Executed ${commandName} command`);
-        //     } else {
-        //         console.log(commandName);
-        //     }
-        // }
->>>>>>> 549ae0ee534a75199bef1e821ae9e803e87582bd
     });
 }
 

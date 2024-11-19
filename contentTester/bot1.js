@@ -2,6 +2,8 @@ const { exec } = require('child_process');
 const tmi = require('tmi.js');
 const fs = require('fs');
 const path = require("path");
+const os = require('os');
+var process = require('process');
 
 // https://id.twitch.tv/oauth2/authorize
 // ?response_type=code
@@ -97,6 +99,7 @@ function rollDice () {
       );     
   }
 
+
   async function getData() {
     const directory = path.join(__dirname, '/dataToSend')
     const moveTo = path.join(__dirname, '/results')
@@ -109,8 +112,17 @@ function rollDice () {
             const filePath = path.join(directory, file);
             return fs.statSync(filePath).isFile();
         });
-
+        
+        count = 1
         for (const fileName of filenames) {
+            console.log(fileName)
+            // get the dataSend number so that we don't need to rename the files but instead done_count goes by the starting file number-- this allows the results files to correspond to the csv.
+            if (count == 1){
+                // done_count = fileName.split('_')[1].split(".")[0]
+                done_count = 1
+                fs.writeFileSync('dataSendCurrNum.json', JSON.stringify([{'current_json': fileName, 'fileNum': done_count}]), {flag: 'w'});
+            }
+        
             const data = await fs.promises.readFile(path.join(directory, fileName), 'utf8');
             
             const json_data = JSON.parse(data);
@@ -124,6 +136,7 @@ function rollDice () {
             }
 
             dataSection.push(file_data);
+            count++; 
         }
     } catch (err) {
         console.error('Error:', err);
@@ -274,9 +287,13 @@ function autoRenew(){
                     } else if (msg === '!audit') {
                         run(client, target);
                         console.log(`* Executed ${msg} command`);
-                    }
-                    else {
+                    } else {
                         const temp = 0;
+                    }
+                } else {
+                    if (msg === 'Experiment Complete'){
+                        client.disconnect();
+                        process.exit(0);
                     }
                 }
             }

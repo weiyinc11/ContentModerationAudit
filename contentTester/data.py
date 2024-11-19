@@ -29,6 +29,34 @@ def make_json(csvFilePath):
         json.dump(data, jsonf)
 
 def setupDataToSendFiles():
+    # Removing the already tested messages and cutting the json files
+    path = os.path.join(os.getcwd(), 'lastSent.json')
+    if os.path.exists(path):
+        #cut json to the next
+        with open(os.path.join(os.getcwd(), 'lastSent.json')) as f:
+            lastSentMsg = json.loads(f.read())
+
+        dataSenddir = os.path.join(os.getcwd(), 'dataToSend')
+        for dataSendjson in os.listdir(dataSenddir):
+            filename = os.fsdecode(dataSendjson)
+
+            if str(lastSentMsg[0]['dataToSendFile']) in filename:
+                dataPath = os.path.join(dataSenddir, filename)
+                with open(dataPath, 'r+') as f_og:
+                    data = json.load(f_og)
+                    cutJson = []
+                    f_index = 1000000000000000000000000
+                    for index, each in enumerate(data):
+                        if each['text'] == lastSentMsg[0]['msg']:
+                            f_index = index
+                        else:
+                            if index > f_index:
+                                cutJson.append(each)
+                    f_og.seek(0)
+                    f_og.write(json.dumps(cutJson, ensure_ascii=False))
+                    f_og.truncate()
+
+
     currDateDataToSend = ''
 
     listofFilesinDTS = os.listdir(dataToSendCSV)
@@ -41,8 +69,13 @@ def setupDataToSendFiles():
         time.sleep(60)
         setupDataToSendFiles()
     else: 
-        for each in os.listdir(currDateDataToSend):
-            make_json(currDateDataToSend+'/'+each)
+        # count = 0
+        if len(os.listdir(os.path.join(currentDir, 'dataToSend'))) == 0:
+            for index, each in enumerate(os.listdir(currDateDataToSend)):
+                if index == 0:
+                    with open(os.path.join(currentDir, "dataSendCurrNum.json"), 'r+') as f_og:
+                        f_og.write(json.dumps([{"current_json":each.split('.')[0] + '.json',"fileNum":1}], ensure_ascii=False))
+                make_json(currDateDataToSend+'/'+each)
         return
         
 setupDataToSendFiles()
@@ -64,43 +97,41 @@ def processResults():
         time.sleep(10)
         processResults()
     else: 
-        loop = True
-        while loop:
-            res = list(os.listdir(dataToSendCSV+'/'+folderName))
-            if len(res) > 0:
-                for index, each in enumerate(os.listdir(resultsCurrDateFolder)):
-                    if not os.path.isdir(resultsCurrDateFolder+'/'+each) and '_d' not in each:
-                        fileNameRes = each
-                        fileNameOG = [x for x in res if x.split('_')[1].split('.')[0] in each][0]
+
+        res = list(os.listdir(dataToSendCSV+'/'+folderName))
+        if len(res) > 0:
+            for index, each in enumerate(os.listdir(resultsCurrDateFolder)):
+                if not os.path.isdir(resultsCurrDateFolder+'/'+each) and '_d' not in each:
+                    fileNameRes = each
+                    try: 
+                        fileNameOG = [x for x in res if x.split('.')[0] in each][0]
                         print(fileNameOG)
+                    except:
+                        break
 
-                        og_data = pd.read_csv(dataToSendCSV+'/'+ folderName +'/'+fileNameOG)
-                        new_data = pd.read_csv(resultsCurrDateFolder+'/'+fileNameRes)
+                    og_data = pd.read_csv(dataToSendCSV+'/'+ folderName +'/'+fileNameOG)
+                    new_data = pd.read_csv(resultsCurrDateFolder+'/'+fileNameRes)
 
-                        diff = {}
+                    diff = {}
 
-                        for each in og_data['text']:
-                            if each not in list(new_data['message']):
-                                diff[each] = 1
-                            else: 
-                                diff[each] = 0
-                        
-                        fileName = fileNameRes.split('.')[0]
+                    for each in og_data['text']:
+                        if each not in list(new_data['message']):
+                            diff[each] = 1
+                        else: 
+                            diff[each] = 0
+                    
+                    fileName = fileNameRes.split('.')[0]
 
-                        if not os.path.exists(currentDir+'/results/'+folderName+'/modData'):
-                            os.makedirs(currentDir+'/results/'+folderName+'/modData') 
+                    if not os.path.exists(currentDir+'/results/'+folderName+'/modData'):
+                        os.makedirs(currentDir+'/results/'+folderName+'/modData') 
 
-                        df = pd.json_normalize(diff).T
-                        df.to_csv(currentDir+'/results/'+folderName+'/modData/'+fileName+'modData.csv', encoding='utf-8')
-                        print("Message diff complete.")
+                    df = pd.json_normalize(diff).T
+                    df.to_csv(currentDir+'/results/'+folderName+'/modData/'+fileName+'modData.csv', encoding='utf-8')
+                    print("Message diff complete.")
 
-                        old_file = os.path.join(resultsCurrDateFolder, fileName+'.csv')
-                        os.rename(old_file, os.path.join(resultsCurrDateFolder, fileName+'_d.csv'))
+                    old_file = os.path.join(resultsCurrDateFolder, fileName+'.csv')
+                    os.rename(old_file, os.path.join(resultsCurrDateFolder, fileName+'_d.csv'))
 
-                temp = [each for each in os.listdir(resultsCurrDateFolder) if not os.path.isdir(resultsCurrDateFolder+'/'+each) and '_d' not in each]
-                print("Waiting for updated data results...")
-                time.sleep(120)
-                temp2 = [each for each in os.listdir(resultsCurrDateFolder) if not os.path.isdir(resultsCurrDateFolder+'/'+each) and '_d' not in each]
-                loop = temp <= temp2
-
-processResults() 
+experiment_done = input("Please enter a key to indicate experiment completed: ")
+if (experiment_done):
+    processResults() 

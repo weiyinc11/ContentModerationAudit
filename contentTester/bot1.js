@@ -5,6 +5,13 @@ const path = require("path");
 const os = require('os');
 var process = require('process');
 
+const args = process.argv.slice(2);
+// console.log("refresh token: ", args[0].split("=")[1]);
+// console.log("client_id: " , args[1].split("=")[1]);
+// console.log("client_secret: ", args[2].split("=")[1]);
+// console.log("msg_count: ",args[3]);
+// console.log("randomWaitingtime: ",args[4]);
+
 // https://id.twitch.tv/oauth2/authorize
 // ?response_type=code
 // &client_id=3mmjffutkuzt1o3novz9855mfsbpy9
@@ -36,42 +43,11 @@ var process = require('process');
 // {"access_token":"jde9l1x6klkqzig4m2pnzhqn4nysc1","expires_in":14832,"refresh_token":"54uq7b3b6wivu7h2e4gdgxeexwb473k70jocnxdt6exexxz9yd","scope":["chat:edit","chat:read"],"token_type":"bearer"}
 
 var access_token = '';
-var refresh_token = '54uq7b3b6wivu7h2e4gdgxeexwb473k70jocnxdt6exexxz9yd';
+var refresh_token = args[0].split("=")[1];
 var expires_in = 0;
-const client_id = '4833yyasbekihgj8in8e2hjqco5m16';
-const client_secret = '80vr3zvtuemc2ljs1f34wj1fz368y7';
+const client_id = args[1].split("=")[1];
+const client_secret = args[2].split("=")[1];
 
-function setup(resultp){
-    exec(`curl -X POST 'https://id.twitch.tv/oauth2/token' \
-        -H 'Content-Type: application/x-www-form-urlencoded' \
-        -d 'client_id=${client_id}&client_secret=${client_secret}&code=oy5c7xwcatfvnr7l4w6xnyi3gx9nyb&grant_type=authorization_code&redirect_uri=http://localhost:3000'`, (error, stdout, stderr) => {
-            if (error) {
-            console.error(`exec error: ${error}`);
-            return;
-            }
-            console.log(`stdout: ${stdout}`);
-            console.error(`stderr: ${stderr}`);
-        // var data = `{"access_token":"s1kgjcjn5thp5b1cvcleqv5f6acuh7","expires_in":13208,"refresh_token":"xop9uqsjxmqzsnn5khyxrg4y2wyi16poykrpvje0w4ydsm0aur","scope":["chat:edit","chat:read"],"token_type":"bearer"}`
-        var data = String(stdout);
-        var each = data.split(',');
-        console.log("Access Token: " + each[0].split(':')[1]);
-
-        var i = 0;
-        for (i = 0; i < 3; i++) {
-            result.push(each[i].split(':')[1].replace(/"/g, ''));
-        }
-
-        // setTimeout(renewToken, parseInt(result[1]) * 1000);
-        console.log("Running renewToken...");
-        setTimeout(renewToken, 5000);
-
-        resultp = {
-            "refresh_token": refresh_token,
-            "access_token": access_token,
-        }
-        return resultp;
-    });
-}
 
 // Function called when the "dice" command is issued
 function rollDice () {
@@ -82,21 +58,6 @@ function rollDice () {
   // Called every time the bot connects to Twitch chat
   function onConnectedHandler (addr, port) {
     console.log(`* Connected to ${addr}:${port}`);
-  }
-  
-  
-  function messageInter() {
-      let seconds = 15;
-      var setMessages = setInterval (
-          function message() {
-              // console.log(seconds);
-              client.say(target, `Comment #${seconds}`)
-              seconds--;
-              if (seconds === 0) {
-                  clearInterval(setMessages);
-              }
-          }, 1000
-      );     
   }
 
 
@@ -182,14 +143,17 @@ async function processFileData(fileData, client, target, startIndex) {
     return new Promise((resolve) => {
         let index = startIndex;
         let count = 5;
-
-        let randomWaitMsgTime = 4000
-        const intervalId = setInterval(() => {
+        // Initial average response time (1.5 seconds as a starting point)
+        let avgResponseTime = 1500;
+        const MIN_DELAY = 1500; // Minimum delay (1 second)
+        const MAX_DELAY = 3000; // Maximum delay (3 seconds)
+        const intervalId = setInterval(async() => {
             if (count > 0 && index < Math.floor(fileData.length)) {
+                const startTime = Date.now(); // Start measuring response time
                 if (count == 1){
                     try {
                         msg_sent = [new Date(), fileData[index].text]
-                        client.say(target, fileData[index].text);
+                        await client.say(target, fileData[index].text);
                         count--;
                     } catch {
                         count--;
@@ -197,7 +161,7 @@ async function processFileData(fileData, client, target, startIndex) {
                 } else {
                     try {
                         msg_sent = [new Date(), fileData[index].text]
-                        client.say(target, fileData[index].text);
+                        await client.say(target, fileData[index].text);
                         index++;
                         count--;
                     } catch {
@@ -205,13 +169,17 @@ async function processFileData(fileData, client, target, startIndex) {
                         count--;
                     }
                 }
+                const responseTime = Date.now() - startTime;
+                avgResponseTime = (avgResponseTime + responseTime) / 2; // Weighted average
+                avgResponseTime = Math.min(Math.max(avgResponseTime, MIN_DELAY), MAX_DELAY); // Clamp delay
             } else {
                 clearInterval(intervalId);
                 resolve(index + 1);
             }
-        }, randomWaitMsgTime);
+        }, avgResponseTime);
     });
 }
+
 
 async function run(client, target) {
     const data = await getData();
@@ -242,11 +210,11 @@ function autoRenew(){
         // Define configuration options
         const opts = {
             identity: {
-            username: 'homeland3r1',
+            username: args[5].split("=")[1],
             password: String(access_token)
             },
             channels: [
-            'hughierin',
+                args[6].split("=")[1],
             ]
         };
         

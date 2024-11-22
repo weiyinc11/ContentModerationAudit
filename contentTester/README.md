@@ -1,19 +1,19 @@
 Documentation for Implementing tmi.js for Chatbot and results data extraction bot
 ===============
-### Accounts in Use and their respective Registered Bot accounts
+### Example Accounts in Use and their respective Registered Bot accounts
 1. <b>MollyKim</b> <br/> Userid: #1103563061 <br/> Client ID: qhlqnbbq0whady0ic1otaoy6ko4o0f <br/> Client Secret: 7z07tvax1j5ofxggofwn2gzyubgxms
 2. <b>Homeland3r1</b> <br/> Userid: #1112905523 <br/> Client ID: 4833yyasbekihgj8in8e2hjqco5m16 <br/> Client Secret: 80vr3zvtuemc2ljs1f34wj1fz368y7
 3. <b>Hughierin</b>
 
 ## Step 1.1 : Running the experiment
-1. Load all csv files that include a 'text' header for messages to be sent a folder named after the day's 'mm-dd-yyyy' in the 'dataToSendCSV' folder. Also ensure that the files are named as dataSend_1, dataSend_2, etc.  
-2. Run 'python data.py' in the terminal to begin the setup process - this includes converting the files from csv to json files. !Make sure to check that all the files are there (just a sanity check)
-3. Open up a split terminal and run 'node bot1.js' and 'node bot2.js' in separate terminals. This will trigger the chatbot and listener chat bot to begin the process. 
+1. Make sure to enter all the relevant parameters in the bot1args.txt and bot2args.txt files in the bashScript folder and ensure that the token process has been completed for the users to use - Refer to Step 1.2
+2. Load all csv files that include a 'text' header for messages to be sent a folder named after the day's 'mm-dd-yyyy' in the 'dataToSendCSV' folder. 
+3. Move into the bashScript folder and run the experiment1.sh file using './experiment1.sh "$(cat bot1args.txt)" "$(cat bot2args.txt)' after compiling it. 
 4. Go to your chatbot's account on a web browser and open up the host channel's chat. Enter '!dice' command to ensure that all bots are enabled and working. Then, '!audit' will trigger the experiment to run. 
 5. As a new result file is produced after each file, make sure to check every now and then that a corresponding modData folder is in the results/'mm-dd-yyyy' folder and is being populated by each new data results file. 
-6. Once all files are parsed through, check to see that all files correspond to result and then quit each program. 
+6. Once all files are parsed through, enter the 'd' key to start the Json diff process. 
 
-## Step 1 : Implicit Flow User Access Tokens
+## Step 1.2 : Implicit Flow User Access Tokens
 https://id.twitch.tv/oauth2/authorize
 ?response_type=code
 &client_id=<CLIENT_ID>
@@ -45,143 +45,3 @@ This can be found here in bot2.js file ![Bot2 User Declaration Codes](readMeimag
 
 4. Folders 'dataToSend' and 'results' will house the json datasets that need to be sent and the extracted json to csv file.<br/> 
 <b>Note: jsons in 'dataToSend' must include a text column that declares the messages to be sent.</b>
-
-Documentation for Implementing Twitch EventSub and API for Results Bot
-===============
-
-### Accounts in Use and their respective Registered Bot accounts
-1. <b>MollyKim</b> <br/> Userid: #1103563061 <br/> Client ID: ia2ncdr6eb1r99094rnibc8hl541yv <br/> Client Secret: 6xuttx9rwgt7zpp7px1q4tabwla0r2
-2. <b>Frenchie420</b> <br/> Userid: #513530928 <br/> Client ID: khgvhvvvie74g28sgdp979vs858638 <br/> Client Secret: sro8azd9138ldtr4dqr7tdmc4g8q33
-
-## Step 1 : Generate User Access Tokens with the correct scope based on the EventSub you'd like to subscribe to
-1. Using the <a href="https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#oauth-authorization-code-flow">Implicit Grant flow</a>, we can define the scope for each account. <a href="https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelchatmessage">To view the required scopes.</a>
-> https://id.twitch.tv/oauth2/authorize?
-> response_type=code&client_id='YOUR CLIENT ID'&
-> redirect_uri=https://localhost:3000
-> &scope='YOUR REQUIRED SCOPE'
-
-The above includes the following scopes for the 'channel.chat.message' subscription:
-#### Chatting User Scopes: MollyKim123 
-<ul>
-    <li>user:bot</li>
-    <li>user:read:chat</li>
-    <li>user:write:chat</li>
-    <li>moderation:read</li>
-    <li>moderator:manage:automod</li>
-</ul>
-
-> https://id.twitch.tv/oauth2/authorize?
-> response_type=code&client_id=ia2ncdr6eb1r99094rnibc8hl541yv&
-> redirect_uri=https://localhost:3000
-> &scope=user%3Abot+user%3Aread%3Achat+user%3Awrite%3Achat
->
-> <b>Result</b>: https://localhost:3000/?code=fxsgwf2iquwvslzyn9ww5h9peqfao5&scope=user%3Abot+user%3Aread%3Achat+user%3Awrite%3Achat 
-
-#### Broadcaster / Mod Status: Frenchie420
-<ul>
-    <li>channel:bot</li>
-</ul>
-
-> https://id.twitch.tv/oauth2/authorize?
-> response_type=code&client_id=khgvhvvvie74g28sgdp979vs858638&
-> redirect_uri=https://localhost:3000
-> &scope=channel%3Abot+moderation%3Aread+moderator%3Amanage%3Aautomod
->
-> <b>Result</b>: https://localhost:3000/?code=1efy6mjsv23ohb16im1qvp5sdjiae6&scope=channel%3Abot+moderation%3Aread+moderator%3Amanage%3Aautomod
-
-1b. 
-#### Chatting User Scopes: MollyKim123 
-curl -X POST 'https://id.twitch.tv/oauth2/token' \
-         -H 'Content-Type: application/x-www-form-urlencoded' \
-         -d 'client_id=ia2ncdr6eb1r99094rnibc8hl541yv&client_secret=6xuttx9rwgt7zpp7px1q4tabwla0r2&code=fxsgwf2iquwvslzyn9ww5h9peqfao5&grant_type=authorization_code&redirect_uri=https://localhost:3000'
-
-> <b>Result</b>: {"access_token":"ywjxrg4l7av4xry9t9u200f6ksivzi","expires_in":15383,"refresh_token":"fearur8tn5hg2udb5t2g22ojblm4gjddboffpz14cpxy9x4dls","scope":["user:bot","user:read:chat","user:write:chat"],"token_type":"bearer"}
-
-#### Broadcaster / Mod Status: Frenchie420
-curl -X POST 'https://id.twitch.tv/oauth2/token' \
-         -H 'Content-Type: application/x-www-form-urlencoded' \
-         -d 'client_id=khgvhvvvie74g28sgdp979vs858638&client_secret=sro8azd9138ldtr4dqr7tdmc4g8q33&code=1efy6mjsv23ohb16im1qvp5sdjiae6&grant_type=authorization_code&redirect_uri=https://localhost:3000'
-
-> <b>Result</b>: {"access_token":"2pzfzq3t8w0qk4qjf9e7kt7j9lyeyd","expires_in":14746,"refresh_token":"ul0rvn2dzrvazuhs6e6lbprwzhnru9tlsttc6sn7ghvpcyqj8c","scope":["channel:bot","moderation:read","moderator:manage:automod"],"token_type":"bearer"}
-
-
-## Step 2 : Use the Results from above to get the user access tokens 
-
-> curl -X POST 'https://id.twitch.tv/oauth2/token' \
->    -H 'Content-Type: application/x-www-form-urlencoded' \
->    -d 'client_id='YOUR CLIENT ID'&
->    client_secret='YOUR CLIENT SECRET'&
->    grant_type=client_credentials&redirect_uri=https://localhost:3000'
-
-#### Chatting User Scopes: MollyKim123 
-
-> curl -X POST 'https://id.twitch.tv/oauth2/token' \
->    -H 'Content-Type: application/x-www-form-urlencoded' \
->    -d 'client_id=ia2ncdr6eb1r99094rnibc8hl541yv&
->    client_secret=6xuttx9rwgt7zpp7px1q4tabwla0r2&
->    grant_type=client_credentials&redirect_uri=https://localhost:3000'
->
-> <b>Result</b>: {"access_token":"pjbwr3g9nc3gajghi40mfd1q1g31vq","expires_in":5230313,"token_type":"bearer"}
-
-#### Broadcaster / Mod Status: Frenchie420
-
-> curl -X POST 'https://id.twitch.tv/oauth2/token' \
->    -H 'Content-Type: application/x-www-form-urlencoded' \
->    -d 'client_id=khgvhvvvie74g28sgdp979vs858638&
->    client_secret=sro8azd9138ldtr4dqr7tdmc4g8q33&
->    grant_type=client_credentials&redirect_uri=https://localhost:3000'
->
-> <b>Result</b>: {"access_token":"vko8mohy4d6sldexb4b1j1ybc34k7h","expires_in":4803131,"token_type":"bearer"}
-
-## Step 3 : Use the Access Token and Account Credentials to create a subscription to the EventSub you'd like
-
-curl -X POST 'https://api.twitch.tv/helix/eventsub/subscriptions' \
--H 'Authorization: Bearer pjbwr3g9nc3gajghi40mfd1q1g31vq' \
--H 'Client-Id: ia2ncdr6eb1r99094rnibc8hl541yv' \
--H 'Content-Type: application/json' \
--d '{
-    "type": "channel.chat.message",
-    "version": "1",
-    "condition": {
-        "broadcaster_user_id": "1103563061",
-        "user_id": "513530928"
-    },
-    "transport": {
-        "method": "webhook",
-        "callback": "https://touching-willingly-shiner.ngrok-free.app/webhooks/callback",
-        "secret": "ContentMod123"
-    }
-}'
-
-twitch api post eventsub/subscriptions -b '{
-    "type": "automod.message.hold",
-    "version": "1",
-    "condition": {
-        "broadcaster_user_id": "513530928",
-        "moderator_user_id": "1103563061"
-    },
-    "transport": {
-        "method": "webhook",
-        "callback": "https://touching-willingly-shiner.ngrok-free.app/webhooks/callback",
-        "secret": "ContentMod123"
-    }
-}'
-
-
-curl -X POST 'https://api.twitch.tv/helix/eventsub/subscriptions' \
--H 'Authorization: Bearer m6yaggtaba4enjzzsabxa9s873pv3e' \
--H 'Client-Id: ia2ncdr6eb1r99094rnibc8hl541yv' \
--H 'Content-Type: application/json' \
--d '{
-    "type": "automod.message.hold",
-    "version": "1",
-    "condition": {
-        "broadcaster_user_id": "513530928",
-        "moderator_user_id": "1103563061"
-    },
-    "transport": {
-        "method": "webhook",
-        "callback": "https://touching-willingly-shiner.ngrok-free.app/webhooks/callback",
-        "secret": "ContentMod123"
-    }
-}'

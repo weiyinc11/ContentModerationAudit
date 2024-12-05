@@ -220,7 +220,6 @@ function autoRenew(){
                         fs.mkdirSync(my_dirMod);
                     }
 
-
                     curr = path.join(__dirname, 'dataSendCurrNum.json');
                     var fileCurrData = JSON.parse(fs.readFileSync(curr, 'utf-8'))
                     done_count = fileCurrData[0]['fileNum']

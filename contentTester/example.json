@@ -1,0 +1,63 @@
+{
+    "type": "automod_caught_message",
+    "data": {
+        "id": "76f4c205-03e9-42c6-9a0e-755ac7a42d92",
+        "content_classification": {
+            "category": "swearing",
+            "level": 4
+        },
+        "message": {
+            "content": {
+                "text": "If you were born with a dick, you're a man. I don't know why that's so hard to understand for libtards",
+                "fragments": [
+                    {
+                        "text": "If you were born with a "
+                    },
+                    {
+                        "text": "dick",
+                        "automod": {
+                            "topics": {
+                                "vulgar": 3
+                            }
+                        }
+                    },
+                    {
+                        "text": ", you're a man. I don't know why that's so hard to understand for libtards"
+                    }
+                ]
+            },
+            "id": "76f4c205-03e9-42c6-9a0e-755ac7a42d92",
+            "channel_id": "1135845304",
+            "channel_login": "hughierin",
+            "sender": {
+                "user_id": "1103563061",
+                "login": "mollykim123",
+                "display_name": "mollykim123"
+            },
+            "sent_at": "2024-12-05T19:26:41.46370232Z",
+            "non_broadcaster_language": "en"
+        },
+        "reason_code": "AutoModCaughtMessageReason",
+        "resolver_id": "",
+        "resolver_login": "",
+        "status": "PENDING",
+        "caught_message_reason": {
+            "reason": "AutoModCaughtMessageReason",
+            "automod_failure": {
+                "category": "swearing",
+                "level": 4,
+                "positions_in_message": [
+                    {
+                        "start_pos": 24,
+                        "end_pos": 27
+                    }
+                ]
+            },
+            "blocked_term_failure": {
+                "contains_private_term": false,
+                "terms_found": null
+            }
+        }
+    }
+}
+

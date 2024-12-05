@@ -42,7 +42,7 @@ def write(fileName, data):
     folderName = now.strftime("%m-%d-%Y")
     todayResults = os.path.join(os.getcwd(), '/results/'+folderName)
 
-    if os.path.isdir(todayResults):
+    if not os.path.isdir(todayResults):
         with open(fileName, 'w', newline='\n') as csvfile:
             fieldnames = ['name', 'branch', 'year', 'cgpa']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -54,8 +54,61 @@ def write(fileName, data):
     print("CSV file written successfully! ")
 
 async def callback_automod(uuid: UUID, data: dict) -> None:
+    time = datetime.now()
+    t = os.path.join(os.getcwd(), 'dataSendCurrNum.json')
+    with open(t, 'r') as file:
+        dataf = json.load(file)
+        done_count = dataf[0]['fileNum']
+        fileNameCurr = dataf[0]['current_json'].split('.')[0]
+
+        now = datetime.now()
+        folderName = now.strftime("%m-%d-%Y")
+        todayResults = os.path.join(os.getcwd(), 'results/'+folderName)
+
+        try:
+            print((not os.path.isdir(todayResults)))
+            if not os.path.isdir(todayResults):
+                os.mkdir(todayResults)
+        except OSError as error:
+            print(error) 
+
+    print("File written to: " + fileNameCurr)
+    print("File num: " + str(done_count))
+    header = ['msg_sent', 'fragments', 'content_category', 'category_level', 'problematic_positions', 'sent_at', 'received_at']
+    frag = data['data']['message']['content']['fragments']
+    dataJson = [
+        {
+            'msg_sent': data['data']['message']['content']['text'],
+            'fragments': [each for each in frag if len(each) > 1], 
+            'content_category': data['data']['content_classification']['category'],
+            'category_level': data['data']['content_classification']['level'], 
+            'problematic_positions': data['data']['caught_message_reason']['automod_failure']['positions_in_message'],
+            'sent_at': data['data']['message']['sent_at'],
+            'received_at': time, 
+        }
+    ]
+
+    try:
+        new_csv = os.path.join(todayResults, fileNameCurr+'_'+done_count+'.csv')
+        if not os.path.isfile(new_csv):
+            with open(new_csv, 'w', newline='') as newcsvfile: 
+                writer = csv.DictWriter(newcsvfile, fieldnames=header)
+                writer.writeheader()
+                writer.writerows(dataJson)
+                newcsvfile.close()
+        else: 
+            with open(new_csv, 'a', newline='') as newcsvfile:
+                writer = csv.DictWriter(newcsvfile)
+                writer.writerow(dataJson)
+                newcsvfile.close()
+        print("CSV file written to successfully! ")
+    except: 
+        print("Error in csv")
+
+        
+    file.close()
     print('got callback for UUID ' + str(uuid))
-    pprint(data)
+    # pprint(data)
 
 done_count = -1
 async def run_example(TOKEN, REFRESH_TOKEN):
@@ -89,66 +142,3 @@ async def run_example(TOKEN, REFRESH_TOKEN):
         print("Token refreshed! ")
 
 asyncio.run(run_example(TOKEN, REFRESH_TOKEN)) 
-
-# {'data': {'caught_message_reason': {'automod_failure': {'category': 'namecalling',
-#                                                         'level': 2,
-#                                                         'positions_in_message': [{'end_pos': 23,
-#                                                                                   'start_pos': 0}]},
-#                                     'blocked_term_failure': {'contains_private_term': False,
-#                                                              'terms_found': None},
-#                                     'reason': 'AutoModCaughtMessageReason'},
-#           'content_classification': {'category': 'namecalling', 'level': 2},
-#           'id': 'b13c3ed7-1a06-4557-a0c6-d61749d1ad3c',
-#           'message': {'channel_id': '1135845304',
-#                       'channel_login': 'hughierin',
-#                       'content': {'fragments': [{'automod': {'topics': {'bullying': 6,
-#                                                                         'identity': 5,
-#                                                                         'vulgar': 6}},
-#                                                  'text': 'stupid assss bitch '
-#                                                          'loser'},
-#                                                 {'text': ' kill yourself'}],
-#                                   'text': 'stupid assss bitch loser kill '
-#                                           'yourself'},
-#                       'id': 'b13c3ed7-1a06-4557-a0c6-d61749d1ad3c',
-#                       'non_broadcaster_language': 'en',
-#                       'sender': {'display_name': 'mollykim123',
-#                                  'login': 'mollykim123',
-#                                  'user_id': '1103563061'},
-#                       'sent_at': '2024-12-04T04:26:31.419918289Z'},
-#           'reason_code': 'AutoModCaughtMessageReason',
-#           'resolver_id': '',
-#           'resolver_login': '',
-#           'status': 'PENDING'},
-#  'type': 'automod_caught_message'}
-
-# {'data': {'caught_message_reason': {'automod_failure': {'category': 'racism',
-#                                                         'level': 1,
-#                                                         'positions_in_message': [{'end_pos': 4,
-#                                                                                   'start_pos': 0},
-#                                                                                  {'end_pos': 17,
-#                                                                                   'start_pos': 13}]},
-#                                     'blocked_term_failure': {'contains_private_term': False,
-#                                                              'terms_found': None},
-#                                     'reason': 'AutoModCaughtMessageReason'},
-#           'content_classification': {'category': 'racism', 'level': 1},
-#           'id': '86d8e755-1aed-475b-a014-b7a2c83c44c6',
-#           'message': {'channel_id': '1135845304',
-#                       'channel_login': 'hughierin',
-#                       'content': {'fragments': [{'automod': {'topics': {'bullying': 5}},
-#                                                  'text': 'loser'},
-#                                                 {'text': ' yellow '},
-#                                                 {'automod': {'topics': {'bullying': 7,
-#                                                                         'identity': 7}},
-#                                                  'text': 'chink'}],
-#                                   'text': 'loser yellow chink'},
-#                       'id': '86d8e755-1aed-475b-a014-b7a2c83c44c6',
-#                       'non_broadcaster_language': 'en',
-#                       'sender': {'display_name': 'mollykim123',
-#                                  'login': 'mollykim123',
-#                                  'user_id': '1103563061'},
-#                       'sent_at': '2024-12-04T04:59:42.431116937Z'},
-#           'reason_code': 'AutoModCaughtMessageReason',
-#           'resolver_id': '',
-#           'resolver_login': '',
-#           'status': 'PENDING'},
-#  'type': 'automod_caught_message'}

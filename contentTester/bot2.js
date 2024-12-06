@@ -211,13 +211,8 @@ function autoRenew(){
 
                     console.log(__dirname)
                     var my_dir = `${__dirname}/results/${folderName}`; 
-                    var my_dirMod = `${__dirname}/results/${folderName}/modData`; 
                     if (!fs.existsSync(my_dir)){
                         fs.mkdirSync(my_dir);
-                    }
-
-                    if (!fs.existsSync(my_dirMod)){
-                        fs.mkdirSync(my_dirMod);
                     }
 
                     curr = path.join(__dirname, 'dataSendCurrNum.json');
@@ -232,11 +227,16 @@ function autoRenew(){
                         }
                     });
                     
-                    write(path.join(my_dir, `${fileNameCurr.split('.')[0]}_${done_count}.csv`), ['user', 'message', 'processTime', 'sent_at'], [{'user': tags['username'], 'message': msg, 'processTime': (now.getTime() - msg_sent[0].getTime()), 'sent_at': msg_sent[0]}])
+                    // write(path.join(my_dir, `${fileNameCurr.split('.')[0]}_${done_count}.csv`), ['user', 'message', 'processTime', 'sent_at'], [{'user': tags['username'], 'message': msg, 'processTime': (now.getTime() - msg_sent[0].getTime()), 'sent_at': msg_sent[0]}])
                 }
             }
             console.log(`Length of dir: ${fs.readdirSync(path.join(__dirname, 'dataToSend')).length}`)
             if(parseInt(fs.readdirSync(path.join(__dirname, 'dataToSend')).length) == parseInt(0)){
+                fs.writeFileSync(path.join(__dirname, 'dataSendCurrNum.json'), JSON.stringify([{"current_json": "experiment complete","fileNum": 0}]), (err) => {
+                    if (err) {
+                        console.error('Error closing experiment:', err);
+                    }
+                })
                 client.say(target, `Experiment Complete`);
                 client.disconnect();
                 process.exit(0);

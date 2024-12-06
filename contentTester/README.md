@@ -8,7 +8,7 @@ Documentation for Implementing tmi.js for Chatbot and results data extraction bo
 ## Step 1.1 : Running the experiment
 1. Make sure to enter all the relevant parameters in the bot1args.txt and bot2args.txt files in the bashScript folder and ensure that the token process has been completed for the users to use - Refer to Step 1.2
 2. Load all csv files that include a 'text' header for messages to be sent a folder named after the day's 'mm-dd-yyyy' in the 'dataToSendCSV' folder. 
-3. Move into the bashScript folder and run the experiment1.sh file using './experiment1.sh "$(cat bot1args.txt)" "$(cat bot2args.txt)' after compiling it. 
+3. Move into the bashScript folder and run the experiment1.sh file using './experiment1.sh "$(cat bot1args.txt)" "$(cat bot2args.txt)" "$(cat pubsubargs.txt)"' after compiling it. 
 4. Go to your chatbot's account on a web browser and open up the host channel's chat. Enter '!dice' command to ensure that all bots are enabled and working. Then, '!audit' will trigger the experiment to run. 
 5. As a new result file is produced after each file, make sure to check every now and then that a corresponding modData folder is in the results/'mm-dd-yyyy' folder and is being populated by each new data results file. 
 6. Once all files are parsed through, enter the 'd' key to start the Json diff process. 

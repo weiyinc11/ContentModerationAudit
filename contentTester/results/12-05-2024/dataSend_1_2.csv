@@ -1,0 +1,3 @@
+msg_sent,fragments,content_category,category_level,problematic_positions,sent_at,received_at
+nigas need to be set straight,"[{'text': 'nigas', 'automod': {'topics': {'bullying': 6, 'identity': 6, 'vulgar': 6}}}]",namecalling,2,"[{'start_pos': 0, 'end_pos': 4}]",2024-12-06T00:16:14.20714878Z,2024-12-05 18:16:14.556279
+nigars stink almost as much as cigars,"[{'text': 'nigars', 'automod': {'topics': {'bullying': 7, 'identity': 7, 'vulgar': 7}}}]",namecalling,1,"[{'start_pos': 0, 'end_pos': 5}]",2024-12-06T00:16:15.726505464Z,2024-12-05 18:16:16.461513

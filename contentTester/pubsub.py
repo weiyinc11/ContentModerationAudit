@@ -13,13 +13,19 @@ import os
 import json
 import csv
 from threading import Timer
+import time
+import sys
 
-APP_ID = '024l49so34okrye48q3uy0r7ctsi5d'
-APP_SECRET = 'u7hfylduc3afka9og9lltund5w2ogl'
+# print(str(sys.argv[1]).split('=')[1])
+# print(str(sys.argv[4]).split('=')[1])
+# print(str(sys.argv[5]).split('=')[1])
+
+APP_ID = str(sys.argv[1]).split('=')[1]
+APP_SECRET = str(sys.argv[2]).split('=')[1]
 # USER_SCOPE = [AuthScope.WHISPERS_READ, AuthScope.MODERATOR_MANAGE_AUTOMOD]
-TARGET_CHANNEL = 'hughierin'
-TOKEN = "lioupdoen5j4ui2svezs3hkucn9dua"
-REFRESH_TOKEN = "fhxs0ms5hjy6q31ceze3in3qqptj04xvy8udljkqj6ojwz0zu9"
+TARGET_CHANNEL = str(sys.argv[3]).split('=')[1]
+TOKEN = str(sys.argv[4]).split('=')[1]
+REFRESH_TOKEN = str(sys.argv[5]).split('=')[1]
 
 msg_sent = [datetime.now(), 0]
 dataSendDr = os.path.join(os.getcwd(), 'dataToSend')
@@ -89,7 +95,7 @@ async def callback_automod(uuid: UUID, data: dict) -> None:
     ]
 
     try:
-        new_csv = os.path.join(todayResults, fileNameCurr+'_'+done_count+'.csv')
+        new_csv = os.path.join(todayResults, str(fileNameCurr+'_'+str(done_count)+'.csv'))
         if not os.path.isfile(new_csv):
             with open(new_csv, 'w', newline='') as newcsvfile: 
                 writer = csv.DictWriter(newcsvfile, fieldnames=header)
@@ -98,17 +104,26 @@ async def callback_automod(uuid: UUID, data: dict) -> None:
                 newcsvfile.close()
         else: 
             with open(new_csv, 'a', newline='') as newcsvfile:
-                writer = csv.DictWriter(newcsvfile)
-                writer.writerow(dataJson)
+                writer = csv.DictWriter(newcsvfile, fieldnames=header)
+                writer.writerow(dataJson[0])
                 newcsvfile.close()
         print("CSV file written to successfully! ")
     except: 
         print("Error in csv")
 
-        
+
     file.close()
     print('got callback for UUID ' + str(uuid))
     # pprint(data)
+
+def checkstatus():
+    with open(os.path.join(os.getcwd(), 'dataSendCurrNum.json'), 'r') as checkExp:
+        checkdata = json.load(checkExp)
+        killExp = checkdata[0]['current_json']
+    checkExp.close()
+
+    if killExp == "experiment complete":
+        return True
 
 done_count = -1
 async def run_example(TOKEN, REFRESH_TOKEN):
@@ -122,7 +137,8 @@ async def run_example(TOKEN, REFRESH_TOKEN):
     await twitch.set_user_authentication(TOKEN, [AuthScope.WHISPERS_READ, AuthScope.CHANNEL_MODERATE], REFRESH_TOKEN)
     user = await first(twitch.get_users(logins=[TARGET_CHANNEL]))
 
-    while True:
+    expCont = True
+    while expCont:
         startTime = datetime.now()
         while((startTime + timedelta(seconds=30)) > datetime.now()):
             # starting up PubSub
@@ -130,6 +146,7 @@ async def run_example(TOKEN, REFRESH_TOKEN):
             pubsub.start()
             # you can either start listening before or after you started pubsub.
             uuid = await pubsub.listen_automod_queue(user.id, user.id, callback_automod)
+            print('listening...')
 
             input("Press enter to close: ")
             await pubsub.unlisten(uuid)

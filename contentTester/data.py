@@ -131,7 +131,3 @@ def processResults():
 
                     old_file = os.path.join(resultsCurrDateFolder, fileName+'.csv')
                     os.rename(old_file, os.path.join(resultsCurrDateFolder, fileName+'_d.csv'))
-
-experiment_done = input("Please enter a key to indicate experiment completed: ")
-if (experiment_done):
-    processResults() 

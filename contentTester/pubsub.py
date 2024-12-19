@@ -20,12 +20,18 @@ import sys
 # print(str(sys.argv[4]).split('=')[1])
 # print(str(sys.argv[5]).split('=')[1])
 
-APP_ID = str(sys.argv[1]).split('=')[1]
-APP_SECRET = str(sys.argv[2]).split('=')[1]
-# USER_SCOPE = [AuthScope.WHISPERS_READ, AuthScope.MODERATOR_MANAGE_AUTOMOD]
-TARGET_CHANNEL = str(sys.argv[3]).split('=')[1]
-TOKEN = str(sys.argv[4]).split('=')[1]
-REFRESH_TOKEN = str(sys.argv[5]).split('=')[1]
+# APP_ID = str(sys.argv[1]).split('=')[1]
+# APP_SECRET = str(sys.argv[2]).split('=')[1]
+# # USER_SCOPE = [AuthScope.WHISPERS_READ, AuthScope.MODERATOR_MANAGE_AUTOMOD]
+# TARGET_CHANNEL = str(sys.argv[3]).split('=')[1]
+# TOKEN = str(sys.argv[4]).split('=')[1]
+# REFRESH_TOKEN = str(sys.argv[5]).split('=')[1]
+
+APP_ID="024l49so34okrye48q3uy0r7ctsi5d"
+APP_SECRET="u7hfylduc3afka9og9lltund5w2ogl"
+TARGET_CHANNEL="hughierin"
+TOKEN="lioupdoen5j4ui2svezs3hkucn9dua"
+REFRESH_TOKEN="fhxs0ms5hjy6q31ceze3in3qqptj04xvy8udljkqj6ojwz0zu9"
 
 msg_sent = [datetime.now(), 0]
 dataSendDr = os.path.join(os.getcwd(), 'dataToSend')

@@ -1,7 +1,7 @@
 REFRESH_TOKEN=54uq7b3b6wivu7h2e4gdgxeexwb473k70jocnxdt6exexxz9yd
 CLIENT_ID=4833yyasbekihgj8in8e2hjqco5m16
 CLIENT_SECRET=80vr3zvtuemc2ljs1f34wj1fz368y7
-msg_count=6
-randomWaitMsgTime=3500
+msg_count=5
+randomWaitMsgTime=4000
 username=homeland3r1
 channel=hughierin

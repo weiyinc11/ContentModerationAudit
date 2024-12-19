@@ -154,12 +154,14 @@ function autoRenew(){
         
         // Connect to Twitch:
         client.connect();
+
+        // setTimeout(() => {client.say(args[4].split("=")[1], "!audit")}, 5000);
         
         setInterval(() => {
             console.log("Renewing Token...");
             autoRenew();
         }, expires_in * 1000);
-        
+
         function onMessageHandler (target, tags, msg, self) {
             if (self) { 
                 return

@@ -142,43 +142,20 @@ let msg_sent = [new Date(), 0];
 async function processFileData(fileData, client, target, startIndex) {
     return new Promise((resolve) => {
         let index = startIndex;
-        let count = 5;
-        // Initial average response time (1.5 seconds as a starting point)
-        let avgResponseTime = 1500;
-        const MIN_DELAY = 1500; // Minimum delay (1 second)
-        const MAX_DELAY = 3000; // Maximum delay (3 seconds)
-        const intervalId = setInterval(async() => {
-            if (count > 0 && index < Math.floor(fileData.length)) {
-                const startTime = Date.now(); // Start measuring response time
-                if (count == 1){
-                    try {
-                        msg_sent = [new Date(), fileData[index].text]
-                        await client.say(target, fileData[index].text);
-                        count--;
-                    } catch {
-                        count--;
-                    }
-                } else {
-                    try {
-                        msg_sent = [new Date(), fileData[index].text]
-                        await client.say(target, fileData[index].text);
-                        index++;
-                        count--;
-                    } catch {
-                        index++;
-                        count--;
-                    }
-                }
-                const responseTime = Date.now() - startTime;
-                avgResponseTime = (avgResponseTime + responseTime) / 2; // Weighted average
-                avgResponseTime = Math.min(Math.max(avgResponseTime, MIN_DELAY), MAX_DELAY); // Clamp delay
+        let count = args[3].split("=")[1];
+        const intervalId = setInterval(() => {
+            if (count > 0 && index < fileData.length) {
+                client.say(target, fileData[index].text);
+                index++;
+                count--;
             } else {
                 clearInterval(intervalId);
                 resolve(index + 1);
             }
-        }, avgResponseTime);
+        }, args[4].split("=")[1]);
     });
 }
+
 
 
 async function run(client, target) {
